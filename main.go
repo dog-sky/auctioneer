@@ -26,6 +26,10 @@ func main() {
 		log.Fatalf("Error setting up server: %v", err)
 	}
 
+	if err = app.MakeBlizzAuth(); err != nil {
+		log.Fatal(err)
+	}
+
 	go func() {
 		oscall := <-interrupt
 		log.Printf("Syscall: %+v", oscall)
