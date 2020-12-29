@@ -12,10 +12,11 @@ import (
 )
 
 type Auctioneer struct {
-	Fib *fiber.App
-	log *logging.Logger
-	cfg *conf.Config
-	ctx context.Context
+	Fib         *fiber.App
+	log         *logging.Logger
+	cfg         *conf.Config
+	ctx         context.Context
+	baseHandler *api.BaseHandler
 }
 
 func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
@@ -26,10 +27,19 @@ func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 
 	auctioneer := NewApp(logger, cfg)
 	auctioneer.ctx = ctx
+	auctioneer.baseHandler = api.NewBasehandler(cfg).(*api.BaseHandler)
 
 	auctioneer.SetupRoutes()
 
 	return auctioneer, nil
+}
+
+func (a *Auctioneer) MakeBlizzAuth() error {
+	if err := a.baseHandler.V1.MakeBlizzAuth(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (a *Auctioneer) Serve() {
@@ -62,8 +72,7 @@ func NewApp(logger *logging.Logger, cfg *conf.Config) *Auctioneer {
 func (a *Auctioneer) SetupRoutes() {
 	v1 := a.Fib.Group("/api/v1")
 
-	baseHandler := api.NewBasehandler(a.log).(*api.BaseHandler)
-	router.SetupV1Routes(v1, baseHandler.V1)
+	router.SetupV1Routes(v1, a.baseHandler.V1)
 }
 
 func (a *Auctioneer) errorHandler(c *fiber.Ctx, incomingError error) error {

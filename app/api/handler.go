@@ -2,7 +2,7 @@ package api
 
 import (
 	"auctioneer/app/api/v1"
-	logging "auctioneer/app/logger"
+	"auctioneer/app/conf"
 )
 
 type Handler interface {
@@ -12,8 +12,8 @@ type BaseHandler struct {
 	V1 v1.Handler
 }
 
-func NewBasehandler(log *logging.Logger) Handler {
+func NewBasehandler(cfg *conf.Config) Handler {
 	return &BaseHandler{
-		V1: v1.NewBasehandlerv1(log),
+		V1: v1.NewBasehandlerv1(&cfg.BlizzApiCfg),
 	}
 }
