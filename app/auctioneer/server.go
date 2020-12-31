@@ -3,6 +3,7 @@ package server
 import (
 	api "auctioneer/app/api"
 	"auctioneer/app/api/v1"
+	"auctioneer/app/cache"
 	"auctioneer/app/conf"
 	logging "auctioneer/app/logger"
 	router "auctioneer/app/router"
@@ -27,7 +28,8 @@ func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 
 	auctioneer := NewApp(logger, cfg)
 	auctioneer.ctx = ctx
-	auctioneer.baseHandler = api.NewBasehandler(cfg).(*api.BaseHandler)
+	cache := cache.NewCache()
+	auctioneer.baseHandler = api.NewBasehandler(cfg, cache).(*api.BaseHandler)
 
 	auctioneer.SetupRoutes()
 
