@@ -29,6 +29,9 @@ func main() {
 	if err = app.MakeBlizzAuth(); err != nil {
 		log.Fatal(err)
 	}
+	if err = app.GetRealmList(); err != nil {
+		log.Fatal(err)
+	}
 
 	go func() {
 		oscall := <-interrupt
