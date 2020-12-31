@@ -38,7 +38,13 @@ func (h *v1Handler) GetBlizzRealms() error {
 		return fmt.Errorf("Error unmarshaling realm list response: %v", err)
 	}
 
-	// TODO Сохранить данные о реалмах локально в мапу realmName: realmId
+	h.setRealms(realmData)
 
 	return nil
+}
+
+func (h *v1Handler) setRealms(realms *BlizzRealmsSearchResult) {
+	for _, realm := range realms.Realms {
+		h.cache.SetRealmID(realm.Name, realm.ID)
+	}
 }
