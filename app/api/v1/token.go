@@ -10,9 +10,16 @@ import (
 func (h *v1Handler) MakeBlizzAuth() error {
 	body := strings.NewReader("grant_type=client_credentials")
 
-	request, err := http.NewRequest(http.MethodPost, h.BlizzApiCfg.AUTHUrl.String(), body)
+	request, err := http.NewRequest(
+		http.MethodPost,
+		h.BlizzApiCfg.AUTHUrl.String(),
+		body,
+	)
 	if err != nil {
-		return fmt.Errorf("Error creating request: %v", err)
+		return fmt.Errorf(
+			"Error creating request: %v",
+			err,
+		)
 	}
 
 	request.SetBasicAuth(h.BlizzApiCfg.ClientID, h.BlizzApiCfg.ClientSecret)
@@ -27,7 +34,10 @@ func (h *v1Handler) MakeBlizzAuth() error {
 	tokenData := new(BlizzardToken)
 
 	if err := json.NewDecoder(response.Body).Decode(&tokenData); err != nil {
-		return fmt.Errorf("Error unmarshaling blizzard auth response: %v", err)
+		return fmt.Errorf(
+			"Error unmarshaling blizzard auth response: %v",
+			err,
+		)
 	}
 
 	h.token = tokenData
