@@ -42,6 +42,14 @@ func (a *Auctioneer) MakeBlizzAuth() error {
 	return nil
 }
 
+func (a *Auctioneer) GetRealmList() error {
+	if err := a.baseHandler.V1.GetBlizzRealms(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (a *Auctioneer) Serve() {
 	go func() {
 		if err := a.Fib.Listen(a.cfg.AppPort); err != nil {
