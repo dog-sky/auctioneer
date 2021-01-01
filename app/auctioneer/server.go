@@ -10,6 +10,7 @@ import (
 	"context"
 	"fmt"
 	fiber "github.com/gofiber/fiber/v2"
+	fiberLogger "github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 type Auctioneer struct {
@@ -37,7 +38,7 @@ func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 }
 
 func (a *Auctioneer) MakeBlizzAuth() error {
-	if err := a.baseHandler.V1.MakeBlizzAuth(); err != nil {
+	if err := a.baseHandler.V1.(*v1.V1Handler).BlizzClient.MakeBlizzAuth(); err != nil {
 		return err
 	}
 
@@ -45,7 +46,7 @@ func (a *Auctioneer) MakeBlizzAuth() error {
 }
 
 func (a *Auctioneer) GetRealmList() error {
-	if err := a.baseHandler.V1.GetBlizzRealms(); err != nil {
+	if err := a.baseHandler.V1.(*v1.V1Handler).BlizzClient.GetBlizzRealms(); err != nil {
 		return err
 	}
 
@@ -73,6 +74,7 @@ func NewApp(logger *logging.Logger, cfg *conf.Config) *Auctioneer {
 		ErrorHandler:          app.errorHandler,
 		DisableStartupMessage: true,
 	})
+	app.Fib.Use(fiberLogger.New())
 	app.log = logger
 	app.cfg = cfg
 
@@ -93,11 +95,11 @@ func (a *Auctioneer) errorHandler(c *fiber.Ctx, incomingError error) error {
 
 	if e, ok := incomingError.(*fiber.Error); ok {
 		code = e.Code
-		resp.Result = e.Message
+		resp.Message = e.Message
 	} else {
-		resp.Result = incomingError.Error()
+		resp.Message = incomingError.Error()
 	}
 
-	a.log.Error(resp.Result)
+	a.log.Error(resp.Message)
 	return c.Status(code).JSON(resp)
 }
