@@ -1,29 +1,23 @@
 package v1
 
 import (
+	"auctioneer/app/blizz"
 	"auctioneer/app/cache"
 	"auctioneer/app/conf"
-	"net/http"
+	"github.com/gofiber/fiber/v2"
 )
 
 type Handler interface {
-	MakeBlizzAuth() error
-	GetBlizzRealms() error
+	SearchItemData(*fiber.Ctx) error
 }
 
-type v1Handler struct {
-	token       *BlizzardToken
-	BlizzApiCfg *conf.BlizzApiCfg
-	httpClient  *http.Client
-	cache       *cache.Cache
+type V1Handler struct {
+	BlizzClient *blizz.BlizzClient
 	// log      *logging.Logger
 }
 
 func NewBasehandlerv1(blizzCfg *conf.BlizzApiCfg, cache *cache.Cache) Handler {
-	return &v1Handler{
-		BlizzApiCfg: blizzCfg,
-		httpClient:  new(http.Client),
-		cache:       cache,
+	return &V1Handler{
+		BlizzClient: blizz.NewBlizzClient(blizzCfg, cache),
 	}
-
 }
