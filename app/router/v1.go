@@ -6,5 +6,5 @@ import (
 )
 
 func SetupV1Routes(r fiber.Router, h v1.Handler) {
-	// Заполнить роуты с хендлером v1
+	r.Get("/auc_search", h.SearchItemData)
 }
