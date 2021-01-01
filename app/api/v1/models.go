@@ -2,8 +2,8 @@ package v1
 
 type searchQueryParams struct {
 	RealmName string `query:"realm_name"`
-	// itemname  string `query:"item_name"`
-	Region string `query:"region"`
+	ItemName  string `query:"item_name"`
+	Region    string `query:"region"`
 }
 
 type responseResultv1 struct {

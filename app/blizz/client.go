@@ -16,6 +16,7 @@ type Client interface {
 	MakeBlizzAuth() error
 	setRealms(*BlizzRealmsSearchResult)
 	GetRealmID(string) int
+	SearchItem(itemName string, region string) (*ItemResult, error)
 }
 
 type client struct {
@@ -33,9 +34,69 @@ func NewClient(blizzCfg *conf.BlizzApiCfg, cache cache.Cache) Client {
 	}
 }
 
+func (c *client) SearchItem(itemName string, region string) (*ItemResult, error) {
+	requestURL, err := url.Parse(
+		fmt.Sprintf(c.cfg.APIUrl+"/data/wow/search/item", region),
+	)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"Error creating item search request url: %v",
+			err,
+		)
+	}
+	q := requestURL.Query()
+	q.Set("namespace", fmt.Sprintf("static-%s", region))
+	// q.Set("region", region)
+	q.Set("access_token", c.token.AccessToken)
+	if itemName != "" {
+		if isRussian(itemName) {
+			// Проверяем либо кирилицу
+			q.Set("name.ru_RU", itemName)
+		} else {
+			// либо устанавливает английский язык для поиска предмета
+			q.Set("name.en_US", itemName)
+		}
+	}
+	requestURL.RawQuery = q.Encode()
+
+	request, err := http.NewRequest(http.MethodGet, requestURL.String(), nil)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"Error creating item search request: %v",
+			err,
+		)
+	}
+
+	response, err := c.httpClient.Do(request)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"Error making search item request: %v",
+			err,
+		)
+	}
+	if response.StatusCode != fiber.StatusOK {
+		return nil, fmt.Errorf(
+			"Error making search item request, status: %v",
+			response.Status,
+		)
+	}
+
+	defer response.Body.Close()
+
+	itemData := new(ItemResult)
+	if err := json.NewDecoder(response.Body).Decode(itemData); err != nil {
+		return nil, fmt.Errorf(
+			"Error unmarshaling realm list response: %v",
+			err,
+		)
+	}
+
+	return itemData, nil
+}
+
 func (c *client) GetBlizzRealms() error {
 	requestURL, err := url.Parse(
-		c.cfg.APIUrl.String() + "/data/wow/realm/index",
+		fmt.Sprintf(c.cfg.APIUrl+"/data/wow/realm/index", "eu"),
 	)
 	if err != nil {
 		return fmt.Errorf(
@@ -73,7 +134,7 @@ func (c *client) GetBlizzRealms() error {
 	defer response.Body.Close()
 
 	realmData := new(BlizzRealmsSearchResult)
-	if err := json.NewDecoder(response.Body).Decode(&realmData); err != nil {
+	if err := json.NewDecoder(response.Body).Decode(realmData); err != nil {
 		return fmt.Errorf(
 			"Error unmarshaling realm list response: %v",
 			err,
@@ -110,8 +171,7 @@ func (c *client) MakeBlizzAuth() error {
 	defer response.Body.Close()
 
 	tokenData := new(BlizzardToken)
-
-	if err := json.NewDecoder(response.Body).Decode(&tokenData); err != nil {
+	if err := json.NewDecoder(response.Body).Decode(tokenData); err != nil {
 		return fmt.Errorf(
 			"Error unmarshaling blizzard auth response: %v",
 			err,

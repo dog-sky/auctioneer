@@ -29,14 +29,17 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 	res := new(ResponseV1)
 	res.Success = true
 
-	// TODO
-	res.Message = "DEBUG"
-	// Получить в структуру все айди предметов, которые соответсвуют поиску (или пропустить этот шаг если не передано значение)
-	// Потом сделать запрос в аук по серверу
-	// получить все медиа айтимов, которые пересекаются по айди (или вообще всех?) Нужны ли медиа вообще, или можно пока выдавать результат текстом?
-	// отдать в ответе только то, что пересекается с запрошеным предметом (или всё, если запрос пустой)
+	// itemData
+	_, err := h.BlizzClient.SearchItem(queryParams.ItemName, queryParams.Region)
+	if err != nil {
+		return fiber.NewError(
+			fiber.StatusBadRequest,
+			err.Error(),
+		)
+	}
 
-	// namespace := fmt.Sprintf("dynamic-%s", queryParams.region)
+	// сделать запрос в аук по серверу
+	// отдать в ответе только то, что пересекается с запрошеным предметом (или всё, если запрос пустой)
 
 	return c.JSON(res)
 }

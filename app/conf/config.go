@@ -6,7 +6,7 @@ import (
 )
 
 type BlizzApiCfg struct {
-	APIUrl       *url.URL `envconfig:"BLIZZARD_API_URL" required:"true"`
+	APIUrl       string   `envconfig:"BLIZZARD_API_URL" required:"true"`
 	AUTHUrl      *url.URL `envconfig:"BLIZZARD_AUTH_URL" required:"true"`
 	ClientSecret string   `envconfig:"BLIZZARD_CLIENT_SECRET" required:"true"`
 	ClientID     string   `envconfig:"BLIZZARD_CLIENT_ID" required:"true"`
