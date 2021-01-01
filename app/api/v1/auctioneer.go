@@ -18,10 +18,10 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 		return err
 	}
 
-	realmID := h.BlizzClient.Cache.GetRealmID(queryParams.RealmName)
+	realmID := h.BlizzClient.GetRealmID(queryParams.RealmName)
 	if realmID == 0 {
 		return fiber.NewError(
-			fiber.StatusBadRequest,
+			fiber.StatusNotFound,
 			fmt.Sprintf("Realm %s not found", queryParams.RealmName),
 		)
 	}
