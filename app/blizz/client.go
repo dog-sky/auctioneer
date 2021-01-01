@@ -46,7 +46,6 @@ func (c *client) SearchItem(itemName string, region string) (*ItemResult, error)
 	}
 	q := requestURL.Query()
 	q.Set("namespace", fmt.Sprintf("static-%s", region))
-	// q.Set("region", region)
 	q.Set("access_token", c.token.AccessToken)
 	if itemName != "" {
 		if isRussian(itemName) {
