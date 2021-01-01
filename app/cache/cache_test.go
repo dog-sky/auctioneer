@@ -30,6 +30,13 @@ func TestCache(t *testing.T) {
 			getKey:    "Страж Смерти",
 			exp:       0,
 		},
+		{
+			name:      "SET GET ok Гордунни разный регистра",
+			realmName: "ГордуННи",
+			reaimID:   12,
+			getKey:    "Гордунни",
+			exp:       12,
+		},
 	}
 
 	for _, tc := range testCases {
