@@ -11,22 +11,29 @@ import (
 	"strings"
 )
 
-type BlizzClient struct {
+type Client interface {
+	GetBlizzRealms() error
+	MakeBlizzAuth() error
+	setRealms(*BlizzRealmsSearchResult)
+	GetRealmID(string) int
+}
+
+type client struct {
 	Cache      *cache.Cache
 	token      *BlizzardToken
 	cfg        *conf.BlizzApiCfg
 	httpClient *http.Client
 }
 
-func NewBlizzClient(blizzCfg *conf.BlizzApiCfg, cache *cache.Cache) *BlizzClient {
-	return &BlizzClient{
+func NewClient(blizzCfg *conf.BlizzApiCfg, cache *cache.Cache) Client {
+	return &client{
 		cfg:        blizzCfg,
 		httpClient: new(http.Client),
 		Cache:      cache,
 	}
 }
 
-func (c *BlizzClient) GetBlizzRealms() error {
+func (c *client) GetBlizzRealms() error {
 	requestURL, err := url.Parse(
 		c.cfg.APIUrl.String() + "/data/wow/realm/index",
 	)
@@ -78,7 +85,7 @@ func (c *BlizzClient) GetBlizzRealms() error {
 	return nil
 }
 
-func (c *BlizzClient) MakeBlizzAuth() error {
+func (c *client) MakeBlizzAuth() error {
 	body := strings.NewReader("grant_type=client_credentials")
 
 	request, err := http.NewRequest(
@@ -116,8 +123,12 @@ func (c *BlizzClient) MakeBlizzAuth() error {
 	return nil
 }
 
-func (c *BlizzClient) setRealms(realms *BlizzRealmsSearchResult) {
+func (c *client) setRealms(realms *BlizzRealmsSearchResult) {
 	for _, realm := range realms.Realms {
 		c.Cache.SetRealmID(realm.Name, realm.ID)
 	}
+}
+
+func (c *client) GetRealmID(RealmName string) int {
+	return c.Cache.GetRealmID(RealmName)
 }

@@ -18,7 +18,7 @@ type Auctioneer struct {
 	log         *logging.Logger
 	cfg         *conf.Config
 	ctx         context.Context
-	baseHandler *api.BaseHandler
+	baseHandler api.Handler
 }
 
 func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
@@ -30,7 +30,7 @@ func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 	auctioneer := NewApp(logger, cfg)
 	auctioneer.ctx = ctx
 	cache := cache.NewCache()
-	auctioneer.baseHandler = api.NewBasehandler(cfg, cache).(*api.BaseHandler)
+	auctioneer.baseHandler = api.NewBasehandler(cfg, cache)
 
 	auctioneer.SetupRoutes()
 
@@ -38,7 +38,7 @@ func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 }
 
 func (a *Auctioneer) MakeBlizzAuth() error {
-	if err := a.baseHandler.V1.(*v1.V1Handler).BlizzClient.MakeBlizzAuth(); err != nil {
+	if err := a.baseHandler.V1MakeBlizzAuth(); err != nil {
 		return err
 	}
 
@@ -46,7 +46,7 @@ func (a *Auctioneer) MakeBlizzAuth() error {
 }
 
 func (a *Auctioneer) GetRealmList() error {
-	if err := a.baseHandler.V1.(*v1.V1Handler).BlizzClient.GetBlizzRealms(); err != nil {
+	if err := a.baseHandler.V1GetBlizzRealms(); err != nil {
 		return err
 	}
 
@@ -84,7 +84,7 @@ func NewApp(logger *logging.Logger, cfg *conf.Config) *Auctioneer {
 func (a *Auctioneer) SetupRoutes() {
 	v1 := a.Fib.Group("/api/v1")
 
-	router.SetupV1Routes(v1, a.baseHandler.V1)
+	router.SetupV1Routes(v1, a.baseHandler.V1Handler())
 }
 
 func (a *Auctioneer) errorHandler(c *fiber.Ctx, incomingError error) error {
