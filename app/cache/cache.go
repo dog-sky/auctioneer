@@ -5,18 +5,23 @@ import (
 	"sync"
 )
 
-type Cache struct {
+type Cache interface {
+	GetRealmID(string) int
+	SetRealmID(string, int)
+}
+
+type cache struct {
 	mux       sync.RWMutex
 	realmList map[string]int
 }
 
-func NewCache() *Cache {
-	return &Cache{
+func NewCache() Cache {
+	return &cache{
 		realmList: make(map[string]int),
 	}
 }
 
-func (c *Cache) GetRealmID(RealmName string) int {
+func (c *cache) GetRealmID(RealmName string) int {
 	if len(RealmName) == 0 {
 		return 0
 	}
@@ -30,7 +35,7 @@ func (c *Cache) GetRealmID(RealmName string) int {
 	return 0
 }
 
-func (c *Cache) SetRealmID(RealmName string, RealmID int) {
+func (c *cache) SetRealmID(RealmName string, RealmID int) {
 	if len(RealmName) == 0 {
 		return
 	}
