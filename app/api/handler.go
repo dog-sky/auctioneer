@@ -16,7 +16,7 @@ type BaseHandler struct {
 	V1 v1.Handler
 }
 
-func NewBasehandler(cfg *conf.Config, cache *cache.Cache) Handler {
+func NewBasehandler(cfg *conf.Config, cache cache.Cache) Handler {
 	return &BaseHandler{
 		V1: v1.NewBasehandlerv1(&cfg.BlizzApiCfg, cache),
 	}

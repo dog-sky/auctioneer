@@ -18,7 +18,7 @@ type V1Handler struct {
 	// log      *logging.Logger
 }
 
-func NewBasehandlerv1(blizzCfg *conf.BlizzApiCfg, cache *cache.Cache) Handler {
+func NewBasehandlerv1(blizzCfg *conf.BlizzApiCfg, cache cache.Cache) Handler {
 	return &V1Handler{
 		BlizzClient: blizz.NewClient(blizzCfg, cache),
 	}

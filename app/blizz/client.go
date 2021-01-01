@@ -19,13 +19,13 @@ type Client interface {
 }
 
 type client struct {
-	Cache      *cache.Cache
+	Cache      cache.Cache
 	token      *BlizzardToken
 	cfg        *conf.BlizzApiCfg
 	httpClient *http.Client
 }
 
-func NewClient(blizzCfg *conf.BlizzApiCfg, cache *cache.Cache) Client {
+func NewClient(blizzCfg *conf.BlizzApiCfg, cache cache.Cache) Client {
 	return &client{
 		cfg:        blizzCfg,
 		httpClient: new(http.Client),
