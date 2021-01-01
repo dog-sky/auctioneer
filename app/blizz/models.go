@@ -7,19 +7,10 @@ type BlizzardToken struct {
 }
 
 type realms struct {
-	Key struct {
-		Href string `json:"href"`
-	} `json:"key"`
 	Name string `json:"name"`
 	ID   int    `json:"id"`
-	Slug string `json:"slug"`
 }
 
 type BlizzRealmsSearchResult struct {
-	Links struct {
-		Self struct {
-			Href string `json:"href"`
-		} `json:"self"`
-	} `json:"_links"`
 	Realms []realms `json:"realms"`
 }

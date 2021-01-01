@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"strings"
 	"sync"
 )
 
@@ -23,7 +24,7 @@ func (c *Cache) GetRealmID(RealmName string) int {
 	c.mux.RLock()
 	defer c.mux.RUnlock()
 
-	if item, ok := c.realmList[RealmName]; ok {
+	if item, ok := c.realmList[strings.ToLower(RealmName)]; ok {
 		return item
 	}
 	return 0
@@ -35,6 +36,6 @@ func (c *Cache) SetRealmID(RealmName string, RealmID int) {
 	}
 
 	c.mux.Lock()
-	c.realmList[RealmName] = RealmID
+	c.realmList[strings.ToLower(RealmName)] = RealmID
 	c.mux.Unlock()
 }
