@@ -3,6 +3,7 @@ package blizz
 import (
 	"auctioneer/app/cache"
 	"auctioneer/app/conf"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	fiber "github.com/gofiber/fiber/v2"
@@ -34,9 +35,12 @@ type client struct {
 }
 
 func NewClient(blizzCfg *conf.BlizzApiCfg, cache cache.Cache) Client {
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
 	return &client{
 		cfg:        blizzCfg,
-		httpClient: new(http.Client),
+		httpClient: &http.Client{Transport: tr},
 		Cache:      cache,
 	}
 }
