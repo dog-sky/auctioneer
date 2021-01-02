@@ -17,6 +17,10 @@ func checkQueryParams(q *searchQueryParams) error {
 		e.Message = "Region must not be empty"
 		return e
 	}
+	if q.ItemName == "" {
+		e.Message = "Item name must not be empty"
+		return e
+	}
 
 	return nil
 }
