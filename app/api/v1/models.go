@@ -13,5 +13,5 @@ type searchQueryParams struct {
 type ResponseV1 struct {
 	Success bool                    `json:"success"`
 	Message string                  `json:"message,omitempty"`
-	Result  []*blizz.AuctionsDetail `json:"result,omitempty"`
+	Result  []*blizz.AuctionsDetail `json:"result"`
 }
