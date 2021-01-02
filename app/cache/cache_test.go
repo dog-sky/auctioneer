@@ -12,28 +12,28 @@ func TestCache(t *testing.T) {
 	testCases := []struct {
 		name      string
 		realmName string
-		reaimID   int
+		realmID   int
 		getKey    string
 		exp       int
 	}{
 		{
 			name:      "SET GET ok Гордунни",
 			realmName: "Гордунни",
-			reaimID:   12,
+			realmID:   12,
 			getKey:    "Гордунни",
 			exp:       12,
 		},
 		{
 			name:      "SET GET no such key Гордунни",
 			realmName: "Гордунни",
-			reaimID:   12,
+			realmID:   12,
 			getKey:    "Страж Смерти",
 			exp:       0,
 		},
 		{
 			name:      "SET GET ok Гордунни разный регистра",
 			realmName: "ГордуННи",
-			reaimID:   12,
+			realmID:   12,
 			getKey:    "Гордунни",
 			exp:       12,
 		},
@@ -41,7 +41,7 @@ func TestCache(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			c.SetRealmID(tc.realmName, tc.reaimID)
+			c.SetRealmID(tc.realmName, tc.realmID)
 			val := c.GetRealmID(tc.getKey)
 			assert.Equal(t, tc.exp, val)
 		})
