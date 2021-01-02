@@ -3,7 +3,7 @@ package v1
 import (
 	"auctioneer/app/blizz"
 	"fmt"
-	fiber "github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2"
 )
 
 func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
