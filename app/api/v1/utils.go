@@ -1,7 +1,7 @@
 package v1
 
 import (
-	fiber "github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2"
 )
 
 func checkQueryParams(q *searchQueryParams) error {

@@ -1,15 +1,15 @@
 package server
 
 import (
-	api "auctioneer/app/api"
+	"auctioneer/app/api"
 	"auctioneer/app/api/v1"
 	"auctioneer/app/cache"
 	"auctioneer/app/conf"
 	logging "auctioneer/app/logger"
-	router "auctioneer/app/router"
+	"auctioneer/app/router"
 	"context"
 	"fmt"
-	fiber "github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2"
 	fiberLogger "github.com/gofiber/fiber/v2/middleware/logger"
 )
 
