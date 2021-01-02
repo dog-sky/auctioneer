@@ -6,6 +6,10 @@
 
 ---
 
+[![buddy pipeline](https://app.buddy.works/dog-sky/auctioneer/pipelines/pipeline/299664/badge.svg?token=84ccc34b677f07df458235c07be06800aea9d16ed9df2d1b390863e7e1e97c3d "buddy pipeline")](https://app.buddy.works/dog-sky/auctioneer/pipelines/pipeline/299664)
+
+---
+
 <div align="center">
   <a href="#api-methods-">API Methods</a> •
   <a href="#getting-started-">Getting Started</a> •
@@ -15,20 +19,10 @@
 
 ## API Methods 🚀
 
-<table>
-  <thead>
-    <tr>
-      <th>Route</th>
-      <th>Expected result</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>/api/v1/auc_search?item_name=Гаррош&region=eu&realm_name=Страж%20Смерти</code></td>
-      <td>The result of the search for the requested item</td>
-    </tr>
-  </tbody>
-</table>
+Route | Expected result
+------------ | -------------
+`/api/v1/auc_search?item_name=Гаррош&region=eu&realm_name=Страж%20Смерти` | The result of the search for the requested item
+
 
 ## Getting Started 👲
 
