@@ -9,7 +9,10 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
+
+const layoutUS = "Mon, 2 Jan 2006 15:04:05 MST"
 
 type Client interface {
 	GetBlizzRealms() error
@@ -17,6 +20,9 @@ type Client interface {
 	setRealms(*BlizzRealmsSearchResult)
 	GetRealmID(string) int
 	SearchItem(itemName string, region string) (*ItemResult, error)
+	GetAuctionData(realmID int, region string) ([]*AuctionsDetail, error)
+	getAuctionData(realmID int, region string) []*AuctionsDetail
+	setAuctionData(realmID int, region string, auctionData *AuctionData, updatedAt *time.Time)
 }
 
 type client struct {
@@ -145,6 +151,70 @@ func (c *client) GetBlizzRealms() error {
 	return nil
 }
 
+func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, error) {
+
+	// Аукцион по реалму обновляется раз в час. В заголовке приходит дата обновления
+	// last-modified: Thu, 31 Dec 2020 15:08:43 GMT
+	// нужно сохранить данные локально для реалма и отдавать их из кеша в течение часа
+
+	data := c.getAuctionData(realmID, region)
+	if data != nil {
+		return data, nil
+	}
+
+	requestURL, err := url.Parse(
+		fmt.Sprintf(c.cfg.APIUrl+"/data/wow/connected-realm/%d/auctions", region, realmID),
+	)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"Error creating action request url: %v", err,
+		)
+	}
+
+	q := requestURL.Query()
+	q.Set("namespace", fmt.Sprintf("dynamic-%s", region))
+	q.Set("access_token", c.token.AccessToken)
+	requestURL.RawQuery = q.Encode()
+
+	request, err := http.NewRequest(http.MethodGet, requestURL.String(), nil)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"Error creating action request: %v", err,
+		)
+	}
+
+	response, err := c.httpClient.Do(request)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"Error making get auction request: %v", err,
+		)
+	}
+	if response.StatusCode != fiber.StatusOK {
+		return nil, fmt.Errorf(
+			"Error making get auction request, status: %v", response.Status,
+		)
+	}
+	defer response.Body.Close()
+
+	auctionData := new(AuctionData)
+	if err := json.NewDecoder(response.Body).Decode(auctionData); err != nil {
+		return nil, fmt.Errorf(
+			"Error unmarshaling action data response: %v", err,
+		)
+	}
+
+	updatedAt := response.Header.Get("last-modified") // GMT! (-3)
+	updatedAtParsed, err := time.Parse(layoutUS, updatedAt)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"Error parsing last-modified header in auction response: %v", err,
+		)
+	}
+	c.setAuctionData(realmID, region, auctionData, &updatedAtParsed)
+
+	return auctionData.Auctions, nil
+}
+
 func (c *client) MakeBlizzAuth() error {
 	body := strings.NewReader("grant_type=client_credentials")
 
@@ -190,4 +260,19 @@ func (c *client) setRealms(realms *BlizzRealmsSearchResult) {
 
 func (c *client) GetRealmID(RealmName string) int {
 	return c.Cache.GetRealmID(RealmName)
+}
+
+func (c *client) getAuctionData(realmID int, region string) []*AuctionsDetail {
+	data := c.Cache.GetAcutionData(realmID, region)
+
+	switch t := data.(type) {
+	case *AuctionData:
+		return t.Auctions
+	default:
+		return nil
+	}
+}
+
+func (c *client) setAuctionData(realmID int, region string, auctionData *AuctionData, updatedAt *time.Time) {
+	c.Cache.SetAuctionData(realmID, region, auctionData, updatedAt)
 }
