@@ -52,9 +52,11 @@ type AuctionsDetail struct {
 		PetQualityID int `json:"pet_quality_id"`
 		PetSpeciesID int `json:"pet_species_id"`
 	} `json:"item"`
-	Buyout   int    `json:"buyout"`
-	Quantity int    `json:"quantity"`
-	TimeLeft string `json:"time_left"`
+	Buyout   int          `json:"buyout"`
+	Quantity int          `json:"quantity"`
+	TimeLeft string       `json:"time_left"`
+	ItemName DetailedName `json:"item_name"`
+	Quality  string       `json:"quality"`
 }
 
 type AuctionData struct {

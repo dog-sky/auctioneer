@@ -16,6 +16,7 @@ const layoutUS = "Mon, 2 Jan 2006 15:04:05 MST"
 
 type Client interface {
 	GetBlizzRealms() error
+	getBlizzRealms(string) error
 	MakeBlizzAuth() error
 	setRealms(*BlizzRealmsSearchResult)
 	GetRealmID(string) int
@@ -100,8 +101,19 @@ func (c *client) SearchItem(itemName string, region string) (*ItemResult, error)
 }
 
 func (c *client) GetBlizzRealms() error {
+	if err := c.getBlizzRealms("eu"); err != nil {
+		return err
+	}
+	if err := c.getBlizzRealms("us"); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *client) getBlizzRealms(region string) error {
 	requestURL, err := url.Parse(
-		fmt.Sprintf(c.cfg.APIUrl+"/data/wow/realm/index", "eu"),
+		fmt.Sprintf(c.cfg.APIUrl+"/data/wow/realm/index", region),
 	)
 	if err != nil {
 		return fmt.Errorf(
@@ -110,7 +122,7 @@ func (c *client) GetBlizzRealms() error {
 		)
 	}
 	q := requestURL.Query()
-	q.Set("namespace", "dynamic-eu")
+	q.Set("namespace", fmt.Sprintf("dynamic-%s", region))
 	q.Set("locale", "ru_RU")
 	q.Set("access_token", c.token.AccessToken)
 	requestURL.RawQuery = q.Encode()
@@ -118,22 +130,22 @@ func (c *client) GetBlizzRealms() error {
 	request, err := http.NewRequest(http.MethodGet, requestURL.String(), nil)
 	if err != nil {
 		return fmt.Errorf(
-			"Error creating realm request: %v",
-			err,
+			"Error creating realm request: %v, region %s",
+			err, region,
 		)
 	}
 
 	response, err := c.httpClient.Do(request)
 	if err != nil {
 		return fmt.Errorf(
-			"Error making get realm request: %v",
-			err,
+			"Error making get realm request: %v, region %s",
+			err, region,
 		)
 	}
 	if response.StatusCode != fiber.StatusOK {
 		return fmt.Errorf(
-			"Error making get realm request, status: %v",
-			response.Status,
+			"Error making get realm request, status: %v, region %s",
+			response.Status, region,
 		)
 	}
 	defer response.Body.Close()
@@ -141,8 +153,8 @@ func (c *client) GetBlizzRealms() error {
 	realmData := new(BlizzRealmsSearchResult)
 	if err := json.NewDecoder(response.Body).Decode(realmData); err != nil {
 		return fmt.Errorf(
-			"Error unmarshaling realm list response: %v",
-			err,
+			"Error unmarshaling realm list response: %v, region %s",
+			err, region,
 		)
 	}
 

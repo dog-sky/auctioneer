@@ -30,22 +30,18 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 	res := new(ResponseV1)
 	res.Success = true
 
-	itemData := new(blizz.ItemResult)
-	if params.ItemName != "" {
-		searchResult, err := h.BlizzClient.SearchItem(params.ItemName, params.Region)
-		if err != nil {
-			return fiber.NewError(
-				fiber.StatusBadRequest,
-				err.Error(),
-			)
-		}
-		if len(searchResult.Results) == 0 {
-			return fiber.NewError(
-				fiber.StatusNotFound,
-				fmt.Sprintf("Item %s not found", params.ItemName),
-			)
-		}
-		itemData = searchResult
+	searchResult, err := h.BlizzClient.SearchItem(params.ItemName, params.Region)
+	if err != nil {
+		return fiber.NewError(
+			fiber.StatusBadRequest,
+			err.Error(),
+		)
+	}
+	if len(searchResult.Results) == 0 {
+		return fiber.NewError(
+			fiber.StatusNotFound,
+			fmt.Sprintf("Item %s not found", params.ItemName),
+		)
 	}
 
 	data, err := h.BlizzClient.GetAuctionData(realmID, params.Region)
@@ -56,21 +52,24 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 		)
 	}
 
-	if len(itemData.Results) == 0 {
+	res.Result = []*blizz.AuctionsDetail{}
+	if len(searchResult.Results) == 0 {
 		res.Result = data
 		return c.JSON(res)
 	}
 
 	for _, AucItem := range data {
-		for _, item := range itemData.Results {
+		for _, item := range searchResult.Results {
 			if AucItem.Item.ID == item.Data.ID {
+				AucItem.ItemName = item.Data.Name
+				AucItem.Quality = item.Data.Quality.Type
+
 				res.Result = append(res.Result, AucItem)
 			}
 		}
 	}
 
 	// TODO В ответ в модели нужно ещё выдавать имя предмета и его качество.
-	// возможно нам нужна функциональность только поиска по предмету и не делать функциональность выгрузки всего аука
-	// Если ничего не нашел -- вернуть пустой резулт. Сейчас не возмращает ничего
+	// Если ничего не нашел -- вернуть пустой резулт. Сейчас не возвращает ничего
 	return c.JSON(res)
 }
