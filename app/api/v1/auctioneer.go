@@ -3,7 +3,7 @@ package v1
 import (
 	"auctioneer/app/blizz"
 	"fmt"
-	fiber "github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2"
 )
 
 func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
@@ -53,11 +53,6 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 	}
 
 	res.Result = []*blizz.AuctionsDetail{}
-	if len(searchResult.Results) == 0 {
-		res.Result = data
-		return c.JSON(res)
-	}
-
 	for _, AucItem := range data {
 		for _, item := range searchResult.Results {
 			if AucItem.Item.ID == item.Data.ID {
@@ -69,7 +64,5 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 		}
 	}
 
-	// TODO В ответ в модели нужно ещё выдавать имя предмета и его качество.
-	// Если ничего не нашел -- вернуть пустой резулт. Сейчас не возвращает ничего
 	return c.JSON(res)
 }

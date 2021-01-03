@@ -10,7 +10,7 @@ import (
 type Cache interface {
 	GetRealmID(string) int
 	SetRealmID(string, int)
-	GetAcutionData(realmID int, region string) interface{}
+	GetAuctionData(realmID int, region string) interface{}
 	SetAuctionData(realmID int, region string, auctionData interface{}, updatedAt *time.Time)
 }
 
@@ -56,7 +56,7 @@ func (c *cache) SetRealmID(RealmName string, RealmID int) {
 	c.mux.Unlock()
 }
 
-func (c *cache) GetAcutionData(realmID int, region string) interface{} {
+func (c *cache) GetAuctionData(realmID int, region string) interface{} {
 	if realmID == 0 {
 		return nil
 	}
