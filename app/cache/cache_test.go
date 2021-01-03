@@ -77,11 +77,11 @@ func Test_cache_SetAuctionData(t *testing.T) {
 		updatedAt   *time.Time
 	}
 	tests := []struct {
-		name string
-		args args
+		name       string
+		args       args
 		getRealmID int
-		getRegion string
-		exp  interface{}
+		getRegion  string
+		exp        interface{}
 	}{
 		{
 			name: "OK now",
@@ -121,8 +121,8 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				updatedAt: &now,
 			},
 			getRealmID: 504,
-			getRegion: "eu",
-			exp: &blizz.AuctionData{},
+			getRegion:  "eu",
+			exp:        &blizz.AuctionData{},
 		},
 		{
 			name: "No get region",
@@ -162,8 +162,8 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				updatedAt: &now,
 			},
 			getRealmID: 504,
-			getRegion: "",
-			exp: nil,
+			getRegion:  "",
+			exp:        nil,
 		},
 		{
 			name: "No such data region",
@@ -203,8 +203,8 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				updatedAt: &now,
 			},
 			getRealmID: 50423,
-			getRegion: "us",
-			exp: nil,
+			getRegion:  "us",
+			exp:        nil,
 		},
 		{
 			name: "OK past",
@@ -244,8 +244,8 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				updatedAt: &past,
 			},
 			getRealmID: 2,
-			getRegion: "eu",
-			exp: nil,
+			getRegion:  "eu",
+			exp:        nil,
 		},
 		{
 			name: "OK realm id 0",
@@ -285,8 +285,8 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				updatedAt: &now,
 			},
 			getRealmID: 0,
-			getRegion: "",
-			exp: nil,
+			getRegion:  "",
+			exp:        nil,
 		},
 	}
 
