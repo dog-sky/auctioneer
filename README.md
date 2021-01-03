@@ -9,6 +9,7 @@
 [![buddy pipeline](https://app.buddy.works/dog-sky/auctioneer/pipelines/pipeline/299664/badge.svg?token=84ccc34b677f07df458235c07be06800aea9d16ed9df2d1b390863e7e1e97c3d "buddy pipeline")](https://app.buddy.works/dog-sky/auctioneer/pipelines/pipeline/299664)
 ![Test and Lint](https://github.com/dog-sky/auctioneer/workflows/Go/badge.svg?branch=main)
 [![codecov](https://codecov.io/gh/dog-sky/auctioneer/branch/main/graph/badge.svg?token=SADKGY8ORK)](https://codecov.io/gh/dog-sky/auctioneer)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dog-sky_auctioneer&metric=alert_status)](https://sonarcloud.io/dashboard?id=dog-sky_auctioneer)
 
 ---
 
