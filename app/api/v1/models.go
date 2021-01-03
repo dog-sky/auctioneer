@@ -5,9 +5,9 @@ import (
 )
 
 type searchQueryParams struct {
-	RealmName string `query:"realm_name"`
-	ItemName  string `query:"item_name"`
-	Region    string `query:"region"`
+	RealmName string `query:"realm_name,required"`
+	ItemName  string `query:"item_name,required"`
+	Region    string `query:"region,required"`
 }
 
 type ResponseV1 struct {
