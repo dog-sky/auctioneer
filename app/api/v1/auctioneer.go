@@ -15,10 +15,6 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 		)
 	}
 
-	if err := checkQueryParams(params); err != nil {
-		return err
-	}
-
 	realmID := h.BlizzClient.GetRealmID(params.RealmName)
 	if realmID == 0 {
 		return fiber.NewError(
