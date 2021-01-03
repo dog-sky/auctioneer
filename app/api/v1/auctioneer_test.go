@@ -210,7 +210,7 @@ func TestV1Handler_SearchItemData(t *testing.T) {
 			expStatus: 400,
 			exp: v1.ResponseV1{
 				Success: false,
-				Message: "Item name must not be empty",
+				Message: "Invalid query params. Err: item_name is empty",
 			},
 		},
 		{
@@ -219,7 +219,7 @@ func TestV1Handler_SearchItemData(t *testing.T) {
 			expStatus: 400,
 			exp: v1.ResponseV1{
 				Success: false,
-				Message: "Region must not be empty",
+				Message: "Invalid query params. Err: region is empty",
 			},
 		},
 		{
@@ -228,7 +228,7 @@ func TestV1Handler_SearchItemData(t *testing.T) {
 			expStatus: 400,
 			exp: v1.ResponseV1{
 				Success: false,
-				Message: "Realm name must not be empty",
+				Message: "Invalid query params. Err: realm_name is empty",
 			},
 		},
 		{
