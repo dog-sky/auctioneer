@@ -1,0 +1,7 @@
+ignore:
+  - "app/conf"
+  - "app/logger"
+  - "app/router"
+  - "app/auctioneer"
+  - "app/api/v1/handler.go"
+  - "app/api/handler.go"
