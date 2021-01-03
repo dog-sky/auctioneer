@@ -1,13 +1,12 @@
-package cache_test
+package cache
 
 import (
-	"auctioneer/app/cache"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestCache(t *testing.T) {
-	c := cache.NewCache()
+	c := NewCache()
 
 	testCases := []struct {
 		name      string
