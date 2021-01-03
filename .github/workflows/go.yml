@@ -29,8 +29,11 @@ jobs:
             dep ensure
         fi
 
-    - name: Run golangci-lint
-      uses: golangci/golangci-lint-action@v1.2.1
+    - uses: actions/checkout@v2
+    - name: golangci-lint
+      uses: golangci/golangci-lint-action@v2
+      with:
+        version: v1.2.1
 
     - name: Test
       run: go test -v -race -timeout 30s -cover ./...
