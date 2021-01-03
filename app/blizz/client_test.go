@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"strings"
 )
 
 var blizzClient Client
@@ -44,12 +45,24 @@ func TestClient_searchItem(t *testing.T) {
 	res, err := blizzClient.SearchItem("Гаррош", "eu")
 	assert.NoError(t, err)
 	assert.NotNil(t, res)
+
+	res, err = blizzClient.SearchItem("Garrosh", "eu")
+	assert.NoError(t, err)
+	assert.NotNil(t, res)
+
+	res, err = blizzClient.SearchItem("Garrosh", "us")
+	assert.Error(t, err)
+	assert.Nil(t, res)
 }
 
 func TestClient_getAuctionData(t *testing.T) {
 	res, err := blizzClient.GetAuctionData(501, "eu")
 	assert.NoError(t, err)
 	assert.NotNil(t, res)
+
+	res, err = blizzClient.GetAuctionData(501, "us")
+	assert.Error(t, err)
+	assert.Nil(t, res)
 }
 
 func serverMock() *httptest.Server {
@@ -94,6 +107,12 @@ func realmListMock(w http.ResponseWriter, r *http.Request) {
 }
 
 func searchItemMock(w http.ResponseWriter, r *http.Request) {
+	q := r.RequestURI
+	if strings.Contains(q, "static-us") {
+		w.WriteHeader(404)
+		return
+	}
+
 	items := &ItemResult{
 		Results: []ItemTesult{
 			{
@@ -136,6 +155,12 @@ func searchItemMock(w http.ResponseWriter, r *http.Request) {
 }
 
 func auctionDataMock(w http.ResponseWriter, r *http.Request) {
+	q := r.RequestURI
+	if strings.Contains(q, "dynamic-us") {
+		w.WriteHeader(404)
+		return
+	}
+
 	aucData := AuctionData{
 		Auctions: []*AuctionsDetail{
 			&AuctionsDetail{
