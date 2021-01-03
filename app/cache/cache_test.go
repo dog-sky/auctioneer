@@ -40,6 +40,20 @@ func Test_cache_getSetRealm(t *testing.T) {
 			getKey:    "Гордунни",
 			exp:       12,
 		},
+		{
+			name:      "GET не передано значение",
+			realmName: "ГордуННи",
+			realmID:   12,
+			getKey:    "",
+			exp:       0,
+		},
+		{
+			name:      "SET не передано значение",
+			realmName: "",
+			realmID:   12,
+			getKey:    "Годунни",
+			exp:       0,
+		},
 	}
 
 	for _, tc := range testCases {
@@ -142,6 +156,45 @@ func Test_cache_SetAuctionData(t *testing.T) {
 					},
 				},
 				updatedAt: &past,
+			},
+			exp: nil,
+		},
+		{
+			name: "OK realm id 0",
+			args: args{
+				realmID: 0,
+				region:  "eu",
+				auctionData: &blizz.AuctionData{
+					Auctions: []*blizz.AuctionsDetail{
+						&blizz.AuctionsDetail{
+							ID: 2,
+							Item: blizz.AcuItem{
+								ID:      3,
+								Context: 1,
+								Modifiers: []blizz.AucItemModifiers{
+									blizz.AucItemModifiers{
+										Type:  1,
+										Value: 1,
+									},
+								},
+								PetBreedID:   1,
+								PetLevel:     1,
+								PetQualityID: 1,
+								PetSpeciesID: 1,
+							},
+							Buyout:   10001,
+							Quantity: 2,
+							TimeLeft: "233",
+							ItemName: blizz.DetailedName{
+								RuRU: "Боевой топор авангарда Гарроша",
+								EnGB: "Garrosh's Vanguard Battleaxe",
+								EnUS: "Garrosh's Vanguard Battleaxe",
+							},
+							Quality: "UNCOMMON",
+						},
+					},
+				},
+				updatedAt: &now,
 			},
 			exp: nil,
 		},
