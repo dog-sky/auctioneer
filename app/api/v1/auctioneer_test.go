@@ -105,7 +105,7 @@ func (c *mockBlizzClient) SearchItem(itemName string, region string) (*blizz.Ite
 }
 
 func (c *mockBlizzClient) GetAuctionData(realmID int, region string) ([]*blizz.AuctionsDetail, error) {
-	if realmID == 1{
+	if realmID == 1 {
 		return []*blizz.AuctionsDetail{
 			&blizz.AuctionsDetail{
 				ID: 1,

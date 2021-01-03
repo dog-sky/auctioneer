@@ -77,9 +77,11 @@ func Test_cache_SetAuctionData(t *testing.T) {
 		updatedAt   *time.Time
 	}
 	tests := []struct {
-		name string
-		args args
-		exp  interface{}
+		name       string
+		args       args
+		getRealmID int
+		getRegion  string
+		exp        interface{}
 	}{
 		{
 			name: "OK now",
@@ -118,7 +120,91 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				},
 				updatedAt: &now,
 			},
-			exp: &blizz.AuctionData{},
+			getRealmID: 504,
+			getRegion:  "eu",
+			exp:        &blizz.AuctionData{},
+		},
+		{
+			name: "No get region",
+			args: args{
+				realmID: 504,
+				region:  "eu",
+				auctionData: &blizz.AuctionData{
+					Auctions: []*blizz.AuctionsDetail{
+						&blizz.AuctionsDetail{
+							ID: 1,
+							Item: blizz.AcuItem{
+								ID:      2,
+								Context: 1,
+								Modifiers: []blizz.AucItemModifiers{
+									blizz.AucItemModifiers{
+										Type:  1,
+										Value: 1,
+									},
+								},
+								PetBreedID:   1,
+								PetLevel:     1,
+								PetQualityID: 1,
+								PetSpeciesID: 1,
+							},
+							Buyout:   10001,
+							Quantity: 2,
+							TimeLeft: "233",
+							ItemName: blizz.DetailedName{
+								RuRU: "Боевой топор авангарда Гарроша",
+								EnGB: "Garrosh's Vanguard Battleaxe",
+								EnUS: "Garrosh's Vanguard Battleaxe",
+							},
+							Quality: "UNCOMMON",
+						},
+					},
+				},
+				updatedAt: &now,
+			},
+			getRealmID: 504,
+			getRegion:  "",
+			exp:        nil,
+		},
+		{
+			name: "No such data region",
+			args: args{
+				realmID: 504,
+				region:  "eu",
+				auctionData: &blizz.AuctionData{
+					Auctions: []*blizz.AuctionsDetail{
+						&blizz.AuctionsDetail{
+							ID: 1,
+							Item: blizz.AcuItem{
+								ID:      2,
+								Context: 1,
+								Modifiers: []blizz.AucItemModifiers{
+									blizz.AucItemModifiers{
+										Type:  1,
+										Value: 1,
+									},
+								},
+								PetBreedID:   1,
+								PetLevel:     1,
+								PetQualityID: 1,
+								PetSpeciesID: 1,
+							},
+							Buyout:   10001,
+							Quantity: 2,
+							TimeLeft: "233",
+							ItemName: blizz.DetailedName{
+								RuRU: "Боевой топор авангарда Гарроша",
+								EnGB: "Garrosh's Vanguard Battleaxe",
+								EnUS: "Garrosh's Vanguard Battleaxe",
+							},
+							Quality: "UNCOMMON",
+						},
+					},
+				},
+				updatedAt: &now,
+			},
+			getRealmID: 50423,
+			getRegion:  "us",
+			exp:        nil,
 		},
 		{
 			name: "OK past",
@@ -157,7 +243,9 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				},
 				updatedAt: &past,
 			},
-			exp: nil,
+			getRealmID: 2,
+			getRegion:  "eu",
+			exp:        nil,
 		},
 		{
 			name: "OK realm id 0",
@@ -196,7 +284,9 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				},
 				updatedAt: &now,
 			},
-			exp: nil,
+			getRealmID: 0,
+			getRegion:  "",
+			exp:        nil,
 		},
 	}
 
@@ -204,7 +294,7 @@ func Test_cache_SetAuctionData(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c.SetAuctionData(tt.args.realmID, tt.args.region, tt.args.auctionData, tt.args.updatedAt)
 
-			data := c.GetAuctionData(tt.args.realmID, tt.args.region)
+			data := c.GetAuctionData(tt.getRealmID, tt.getRegion)
 			assert.IsType(t, tt.exp, data)
 		})
 	}
