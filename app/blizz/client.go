@@ -17,14 +17,10 @@ const layoutUS = "Mon, 2 Jan 2006 15:04:05 MST"
 
 type Client interface {
 	GetBlizzRealms() error
-	getBlizzRealms(string) error
 	MakeBlizzAuth() error
-	setRealms(*BlizzRealmsSearchResult)
 	GetRealmID(string) int
 	SearchItem(itemName string, region string) (*ItemResult, error)
 	GetAuctionData(realmID int, region string) ([]*AuctionsDetail, error)
-	getAuctionData(realmID int, region string) []*AuctionsDetail
-	setAuctionData(realmID int, region string, auctionData *AuctionData, updatedAt *time.Time)
 }
 
 type client struct {
@@ -32,23 +28,26 @@ type client struct {
 	token      *BlizzardToken
 	cfg        *conf.BlizzApiCfg
 	httpClient *http.Client
+	urls       map[string]string
 }
 
 func NewClient(blizzCfg *conf.BlizzApiCfg, cache cache.Cache) Client {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
+	urlsMap := make(map[string]string)
+	urlsMap["eu"] = blizzCfg.EuAPIUrl
+	urlsMap["us"] = blizzCfg.UsAPIUrl
 	return &client{
 		cfg:        blizzCfg,
 		httpClient: &http.Client{Transport: tr},
 		Cache:      cache,
+		urls:       urlsMap,
 	}
 }
 
 func (c *client) SearchItem(itemName string, region string) (*ItemResult, error) {
-	requestURL, err := url.Parse(
-		fmt.Sprintf(c.cfg.APIUrl+"/data/wow/search/item", region),
-	)
+	requestURL, err := url.Parse(c.urls[region] + "/data/wow/search/item")
 	if err != nil {
 		return nil, fmt.Errorf(
 			"error creating item search request url: %v",
@@ -116,14 +115,9 @@ func (c *client) GetBlizzRealms() error {
 }
 
 func (c *client) getBlizzRealms(region string) error {
-	requestURL, err := url.Parse(
-		fmt.Sprintf(c.cfg.APIUrl+"/data/wow/realm/index", region),
-	)
+	requestURL, err := url.Parse(c.urls[region] + "/data/wow/realm/index")
 	if err != nil {
-		return fmt.Errorf(
-			"error creating realm request url: %v",
-			err,
-		)
+		return fmt.Errorf("error creating realm request url: %v", err)
 	}
 	q := requestURL.Query()
 	q.Set("namespace", fmt.Sprintf("dynamic-%s", region))
@@ -178,13 +172,9 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 		return data, nil
 	}
 
-	requestURL, err := url.Parse(
-		fmt.Sprintf(c.cfg.APIUrl+"/data/wow/connected-realm/%d/auctions", region, realmID),
-	)
+	requestURL, err := url.Parse(c.urls[region] + fmt.Sprintf("/data/wow/connected-realm/%d/auctions", realmID))
 	if err != nil {
-		return nil, fmt.Errorf(
-			"error creating action request url: %v", err,
-		)
+		return nil, fmt.Errorf("error creating action request url: %v", err)
 	}
 
 	q := requestURL.Query()
@@ -236,14 +226,11 @@ func (c *client) MakeBlizzAuth() error {
 
 	request, err := http.NewRequest(
 		http.MethodPost,
-		c.cfg.AUTHUrl.String(),
+		c.cfg.AUTHUrl,
 		body,
 	)
 	if err != nil {
-		return fmt.Errorf(
-			"error creating request: %v",
-			err,
-		)
+		return fmt.Errorf("error creating request: %v", err)
 	}
 
 	request.SetBasicAuth(c.cfg.ClientID, c.cfg.ClientSecret)
@@ -257,10 +244,7 @@ func (c *client) MakeBlizzAuth() error {
 
 	tokenData := new(BlizzardToken)
 	if err := json.NewDecoder(response.Body).Decode(tokenData); err != nil {
-		return fmt.Errorf(
-			"error unmarshaling blizzard auth response: %v",
-			err,
-		)
+		return fmt.Errorf("error unmarshaling blizzard auth response: %v", err)
 	}
 
 	c.token = tokenData
