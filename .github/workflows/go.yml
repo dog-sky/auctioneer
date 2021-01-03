@@ -29,9 +29,11 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
+        go get -u github.com/dave/courtney
 
     - name: Test
-      run: go test -v -race -timeout 30s -coverprofile=coverage.txt -covermode=atomic ./...
+      # run: go test -v -race -timeout 30s -coverprofile=coverage.txt -covermode=atomic ./...
+      run: courtney .
 
     - name: Push coverage
       run: bash <(curl -s https://codecov.io/bash)
