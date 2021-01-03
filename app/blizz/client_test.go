@@ -8,8 +8,8 @@ import (
 	"github.com/twinj/uuid"
 	"net/http"
 	"net/http/httptest"
-	"testing"
 	"strings"
+	"testing"
 )
 
 var blizzClient Client
@@ -59,10 +59,31 @@ func TestClient_getAuctionData(t *testing.T) {
 	res, err := blizzClient.GetAuctionData(501, "eu")
 	assert.NoError(t, err)
 	assert.NotNil(t, res)
+}
 
-	res, err = blizzClient.GetAuctionData(501, "us")
-	assert.Error(t, err)
-	assert.Nil(t, res)
+func TestClient_getAuctionDataError(t *testing.T) {
+	tests := []struct {
+		name   string
+		region string
+	}{
+		{
+			name:   "Server status Err",
+			region: "us",
+		}, {
+			name:   "Time Decode Err",
+			region: "wrong_time",
+		}, {
+			name:   "JSON Decode Err",
+			region: "wrong_json",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			res, err := blizzClient.GetAuctionData(501, "wrong_json")
+			assert.Error(t, err)
+			assert.Nil(t, res)
+		})
+	}
 }
 
 func serverMock() *httptest.Server {
@@ -158,6 +179,17 @@ func auctionDataMock(w http.ResponseWriter, r *http.Request) {
 	q := r.RequestURI
 	if strings.Contains(q, "dynamic-us") {
 		w.WriteHeader(404)
+		return
+	}
+
+	if strings.Contains(q, "dynamic-wrong_time") {
+		w.Header().Set("last-modified", "Sat, 020 Jan 2021 12:08:43 GMT")
+		return
+	}
+
+	if strings.Contains(q, "dynamic-wrong_json") {
+		w.Header().Set("last-modified", "Sat, 2 Jan 2021 12:08:43 GMT")
+		w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 		return
 	}
 
