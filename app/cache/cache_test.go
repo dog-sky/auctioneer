@@ -243,6 +243,47 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				},
 				updatedAt: &past,
 			},
+			getRealmID: 504,
+			getRegion:  "eu",
+			exp:        nil,
+		},
+		{
+			name: "OK past",
+			args: args{
+				realmID: 504,
+				region:  "eu",
+				auctionData: &blizz.AuctionData{
+					Auctions: []*blizz.AuctionsDetail{
+						&blizz.AuctionsDetail{
+							ID: 2,
+							Item: blizz.AcuItem{
+								ID:      3,
+								Context: 1,
+								Modifiers: []blizz.AucItemModifiers{
+									blizz.AucItemModifiers{
+										Type:  1,
+										Value: 1,
+									},
+								},
+								PetBreedID:   1,
+								PetLevel:     1,
+								PetQualityID: 1,
+								PetSpeciesID: 1,
+							},
+							Buyout:   10001,
+							Quantity: 2,
+							TimeLeft: "233",
+							ItemName: blizz.DetailedName{
+								RuRU: "Боевой топор авангарда Гарроша",
+								EnGB: "Garrosh's Vanguard Battleaxe",
+								EnUS: "Garrosh's Vanguard Battleaxe",
+							},
+							Quality: "UNCOMMON",
+						},
+					},
+				},
+				updatedAt: &past,
+			},
 			getRealmID: 2,
 			getRegion:  "eu",
 			exp:        nil,
