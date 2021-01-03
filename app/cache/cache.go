@@ -33,7 +33,7 @@ func NewCache() Cache {
 }
 
 func (c *cache) GetRealmID(RealmName string) int {
-	if len(RealmName) == 0 {
+	if RealmName == "" {
 		return 0
 	}
 
@@ -47,7 +47,7 @@ func (c *cache) GetRealmID(RealmName string) int {
 }
 
 func (c *cache) SetRealmID(RealmName string, RealmID int) {
-	if len(RealmName) == 0 {
+	if RealmName == "" {
 		return
 	}
 
