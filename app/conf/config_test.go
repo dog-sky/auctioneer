@@ -2,28 +2,28 @@ package conf
 
 import (
 	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
-    "os"
 )
 
 func TestNewConfig(t *testing.T) {
 	tests := []struct {
-		name    string
-		want    *Config
+		name       string
+		want       *Config
 		setGoodEnv bool
-		wantErr bool
+		wantErr    bool
 	}{
 		{
-			name:   "not ok",
-			want:   &Config{},
+			name:       "not ok",
+			want:       &Config{},
 			setGoodEnv: false,
-			wantErr: true,
+			wantErr:    true,
 		},
 		{
-			name:   "ok",
-			want:   &Config{},
+			name:       "ok",
+			want:       &Config{},
 			setGoodEnv: true,
-			wantErr: false,
+			wantErr:    false,
 		},
 	}
 	for _, tt := range tests {

@@ -79,6 +79,29 @@ func TestClient_searchItem(t *testing.T) {
 	assert.Nil(t, res)
 }
 
+func TestClient_searchItemErrJson(t *testing.T) {
+	srv := serverMock()
+	cache := cache.NewCache()
+	blizzCfg := conf.BlizzApiCfg{
+		EuAPIUrl:     srv.URL,
+		UsAPIUrl:     srv.URL,
+		AUTHUrl:      srv.URL + "/oauth/token",
+		ClientSecret: "secret",
+		RegionList:   []string{"eu", "us"},
+	}
+	cfgErr := &conf.Config{
+		BlizzApiCfg: blizzCfg,
+	}
+
+	errClient := NewClient(&cfgErr.BlizzApiCfg, cache)
+	_ = errClient.MakeBlizzAuth()
+
+	res, err := errClient.SearchItem("error_item_search", "eu")
+	println("ERROR: ", err.Error())
+	assert.Error(t, err)
+	assert.Nil(t, res)
+}
+
 func TestClient_getAuctionData(t *testing.T) {
 	res, err := blizzClient.GetAuctionData(501, "eu")
 	assert.NoError(t, err)
@@ -161,6 +184,11 @@ func searchItemMock(w http.ResponseWriter, r *http.Request) {
 	q := r.RequestURI
 	if strings.Contains(q, "static-us") {
 		w.WriteHeader(404)
+		return
+	}
+
+	if strings.Contains(q, "error_item_search") {
+		_, _ = io.WriteString(w, "{hello, there}")
 		return
 	}
 
@@ -250,6 +278,7 @@ func auctionDataMock(w http.ResponseWriter, r *http.Request) {
 					EnUS: "Garrosh's Vanguard Battleaxe",
 				},
 				Quality: "UNCOMMON",
+				Price:   120000,
 			},
 		},
 	}
