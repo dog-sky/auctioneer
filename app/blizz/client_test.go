@@ -6,11 +6,11 @@ import (
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"github.com/twinj/uuid"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"io"
 )
 
 var blizzClient Client
@@ -26,6 +26,7 @@ func init() {
 			UsAPIUrl:     srv.URL,
 			AUTHUrl:      srv.URL + "/oauth/token",
 			ClientSecret: "secret",
+			RegionList:   []string{"eu", "us"},
 		},
 	}
 
@@ -38,8 +39,32 @@ func TestClient_auth(t *testing.T) {
 }
 
 func TestClient_getRealms(t *testing.T) {
-	err := blizzClient.GetBlizzRealms()
-	assert.NoError(t, err)
+	c := blizzClient.(*client)
+	c.cfg.RegionList = append(c.cfg.RegionList, "gb")
+
+	err := c.GetBlizzRealms()
+	assert.Error(t, err)
+}
+
+func TestClient_getRealmsErr(t *testing.T) {
+	srv := serverMock()
+	cache := cache.NewCache()
+	blizzCfg := conf.BlizzApiCfg{
+		EuAPIUrl:     srv.URL,
+		UsAPIUrl:     srv.URL,
+		AUTHUrl:      srv.URL + "/oauth/token",
+		ClientSecret: "secret",
+		RegionList:   []string{"gb"},
+	}
+	cfgErr := &conf.Config{
+		BlizzApiCfg: blizzCfg,
+	}
+
+	errClient := NewClient(&cfgErr.BlizzApiCfg, cache)
+	_ = errClient.MakeBlizzAuth()
+
+	err := errClient.GetBlizzRealms()
+	assert.Error(t, err)
 }
 
 func TestClient_searchItem(t *testing.T) {
@@ -111,6 +136,12 @@ func authMock(w http.ResponseWriter, r *http.Request) {
 }
 
 func realmListMock(w http.ResponseWriter, r *http.Request) {
+	q := r.RequestURI
+	if strings.Contains(q, "dynamic-gb") {
+		w.WriteHeader(404)
+		return
+	}
+
 	rlms := BlizzRealmsSearchResult{
 		Realms: []realm{
 			realm{
