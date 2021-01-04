@@ -4,7 +4,6 @@ import (
 	"auctioneer/app/api"
 	"auctioneer/app/api/v1"
 	"auctioneer/app/blizz"
-	"auctioneer/app/cache"
 	"auctioneer/app/conf"
 	logging "auctioneer/app/logger"
 	"auctioneer/app/router"
@@ -43,8 +42,7 @@ func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 
 	auctioneer := NewApp(logger, cfg)
 	auctioneer.ctx = ctx
-	cache := cache.NewCache()
-	blizzClient := blizz.NewClient(&cfg.BlizzApiCfg, cache)
+	blizzClient := blizz.NewClient(&cfg.BlizzApiCfg)
 	auctioneer.BaseHandler = api.NewBasehandler(blizzClient)
 
 	auctioneer.SetupRoutes()

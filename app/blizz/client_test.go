@@ -1,7 +1,6 @@
 package blizz
 
 import (
-	"auctioneer/app/cache"
 	"auctioneer/app/conf"
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
@@ -17,7 +16,6 @@ var blizzClient Client
 
 func init() {
 	srv := serverMock()
-	cache := cache.NewCache()
 	cfg := conf.Config{
 		BlizzApiCfg: conf.BlizzApiCfg{
 			EuAPIUrl:     srv.URL,
@@ -28,7 +26,7 @@ func init() {
 		},
 	}
 
-	blizzClient = NewClient(&cfg.BlizzApiCfg, cache)
+	blizzClient = NewClient(&cfg.BlizzApiCfg)
 }
 
 func TestClient_auth(t *testing.T) {
@@ -50,7 +48,6 @@ func TestClient_getRealms(t *testing.T) {
 
 func TestClient_getRealmsErr(t *testing.T) {
 	srv := serverMock()
-	cache := cache.NewCache()
 	blizzCfg := conf.BlizzApiCfg{
 		EuAPIUrl:     srv.URL,
 		UsAPIUrl:     srv.URL,
@@ -62,7 +59,7 @@ func TestClient_getRealmsErr(t *testing.T) {
 		BlizzApiCfg: blizzCfg,
 	}
 
-	errClient := NewClient(&cfgErr.BlizzApiCfg, cache)
+	errClient := NewClient(&cfgErr.BlizzApiCfg)
 	_ = errClient.MakeBlizzAuth()
 
 	err := errClient.GetBlizzRealms()
@@ -85,7 +82,6 @@ func TestClient_searchItem(t *testing.T) {
 
 func TestClient_searchItemErrJson(t *testing.T) {
 	srv := serverMock()
-	cache := cache.NewCache()
 	blizzCfg := conf.BlizzApiCfg{
 		EuAPIUrl:     srv.URL,
 		UsAPIUrl:     srv.URL,
@@ -97,7 +93,7 @@ func TestClient_searchItemErrJson(t *testing.T) {
 		BlizzApiCfg: blizzCfg,
 	}
 
-	errClient := NewClient(&cfgErr.BlizzApiCfg, cache)
+	errClient := NewClient(&cfgErr.BlizzApiCfg)
 	_ = errClient.MakeBlizzAuth()
 
 	res, err := errClient.SearchItem("error_item_search", "eu")
@@ -123,7 +119,6 @@ func TestClient_getAuctionData(t *testing.T) {
 func TestClient_getAuctionDataError(t *testing.T) {
 
 	srv := serverMock()
-	cache := cache.NewCache()
 	blizzCfg := conf.BlizzApiCfg{
 		EuAPIUrl:     srv.URL,
 		UsAPIUrl:     srv.URL,
@@ -135,7 +130,7 @@ func TestClient_getAuctionDataError(t *testing.T) {
 		BlizzApiCfg: blizzCfg,
 	}
 
-	errClient := NewClient(&cfgErr.BlizzApiCfg, cache)
+	errClient := NewClient(&cfgErr.BlizzApiCfg)
 	_ = errClient.MakeBlizzAuth()
 
 	tests := []struct {
