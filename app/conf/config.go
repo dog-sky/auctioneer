@@ -5,6 +5,7 @@ import (
 )
 
 type BlizzApiCfg struct {
+	RegionList   []string
 	EuAPIUrl     string `envconfig:"BLIZZARD_EU_API_URL" default:"https://eu.api.blizzard.com"`
 	UsAPIUrl     string `envconfig:"BLIZZARD_US_API_URL" default:"https://us.api.blizzard.com"`
 	AUTHUrl      string `envconfig:"BLIZZARD_AUTH_URL" default:"https://us.battle.net/oauth/token"`
@@ -20,6 +21,7 @@ type Config struct {
 
 func NewConfig() (*Config, error) {
 	cfg := new(Config)
+	cfg.BlizzApiCfg.RegionList = []string{"eu", "us"}
 	if err := envconfig.Process("AUCTIONEER", cfg); err != nil {
 		return nil, err
 	}

@@ -91,11 +91,10 @@ func (c *client) SearchItem(itemName string, region string) (*ItemResult, error)
 }
 
 func (c *client) GetBlizzRealms() error {
-	if err := c.getBlizzRealms("eu"); err != nil {
-		return err
-	}
-	if err := c.getBlizzRealms("us"); err != nil {
-		return err
+	for _, region := range c.cfg.RegionList {
+		if err := c.getBlizzRealms(region); err != nil {
+			return err
+		}
 	}
 
 	return nil
