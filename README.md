@@ -11,6 +11,7 @@
 [![codecov](https://codecov.io/gh/dog-sky/auctioneer/branch/main/graph/badge.svg?token=SADKGY8ORK)](https://codecov.io/gh/dog-sky/auctioneer)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dog-sky_auctioneer&metric=alert_status)](https://sonarcloud.io/dashboard?id=dog-sky_auctioneer)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dog-sky/auctioneer)
+[![TelegramBot](https://img.shields.io/badge/t.me-TelegramBot-blue)](https://t.me/AuctionHouseWoWBot)
 
 ---
 
@@ -28,10 +29,17 @@ Route | Expected result
 `/api/v1/auc_search?item_name=Гаррош&region=eu&realm_name=Страж%20Смерти` | The result of the search for the requested item
 
 
+Query params | Description
+------------ | -------------
+`item_name` *required | Name of item to search
+`region` *required | Region of realm. Choose `eu` or `us`
+`realm_name` *required | Name realm in the region
+
+
 ## Getting Started 👲
 
 1. Clone project
-2. Create a new branch from _origin/develop_
+2. Create a new branch from _origin/main_
 3. Do `go mod download` in the root directory
 4. Make the magic
 5. Push branch and create merge request
