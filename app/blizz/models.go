@@ -67,6 +67,7 @@ type AuctionsDetail struct {
 	TimeLeft string       `json:"time_left"`
 	ItemName DetailedName `json:"item_name"`
 	Quality  string       `json:"quality"`
+	Price    int          `json:"unit_price"`
 }
 
 type AuctionData struct {

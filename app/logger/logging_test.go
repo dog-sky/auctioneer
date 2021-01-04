@@ -1,8 +1,8 @@
 package logging
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestNewLogger(t *testing.T) {
