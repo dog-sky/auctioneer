@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"auctioneer/app/api/system"
 	"auctioneer/app/api/v1"
 	server "auctioneer/app/auctioneer"
 	"auctioneer/app/blizz"
@@ -20,8 +21,13 @@ func newV1handler() v1.Handler {
 	return v1.NewBasehandlerv1(&mockBlizzClient{})
 }
 
+func newSystemHandler() system.Handler {
+	return system.NewSystemHandler()
+}
+
 type mockHandler struct {
-	v1 v1.Handler
+	v1     v1.Handler
+	system system.Handler
 }
 
 type mockBlizzClient struct{}
@@ -143,12 +149,17 @@ func (h *mockHandler) V1Handler() v1.Handler {
 	return h.v1
 }
 
+func (h *mockHandler) SystemHandler() system.Handler {
+	return h.system
+}
+
 func TestV1Handler_SearchItemData(t *testing.T) {
 	cfg, _ := conf.NewConfig()
 	logger, _ := logging.NewLogger("DEBUG")
 	app := server.NewApp(logger, cfg)
 	app.BaseHandler = &mockHandler{
-		v1: newV1handler(),
+		v1:     newV1handler(),
+		system: newSystemHandler(),
 	}
 	app.SetupRoutes()
 
