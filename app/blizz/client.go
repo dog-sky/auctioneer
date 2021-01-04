@@ -24,7 +24,7 @@ type Client interface {
 }
 
 type client struct {
-	Cache      cache.Cache
+	cache      cache.Cache
 	token      *BlizzardToken
 	cfg        *conf.BlizzApiCfg
 	httpClient *http.Client
@@ -41,7 +41,7 @@ func NewClient(blizzCfg *conf.BlizzApiCfg, cache cache.Cache) Client {
 	return &client{
 		cfg:        blizzCfg,
 		httpClient: &http.Client{Transport: tr},
-		Cache:      cache,
+		cache:      cache,
 		urls:       urlsMap,
 	}
 }
@@ -212,16 +212,16 @@ func (c *client) MakeBlizzAuth() error {
 
 func (c *client) setRealms(realms *BlizzRealmsSearchResult) {
 	for _, realm := range realms.Realms {
-		c.Cache.SetRealmID(realm.Name, realm.ID)
+		c.cache.SetRealmID(realm.Name, realm.ID)
 	}
 }
 
 func (c *client) GetRealmID(RealmName string) int {
-	return c.Cache.GetRealmID(RealmName)
+	return c.cache.GetRealmID(RealmName)
 }
 
 func (c *client) getAuctionData(realmID int, region string) []*AuctionsDetail {
-	data := c.Cache.GetAuctionData(realmID, region)
+	data := c.cache.GetAuctionData(realmID, region)
 
 	switch t := data.(type) {
 	case *AuctionData:
@@ -232,5 +232,5 @@ func (c *client) getAuctionData(realmID int, region string) []*AuctionsDetail {
 }
 
 func (c *client) setAuctionData(realmID int, region string, auctionData *AuctionData, updatedAt *time.Time) {
-	c.Cache.SetAuctionData(realmID, region, auctionData, updatedAt)
+	c.cache.SetAuctionData(realmID, region, auctionData, updatedAt)
 }

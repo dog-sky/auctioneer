@@ -3,6 +3,7 @@ package server
 import (
 	"auctioneer/app/api"
 	"auctioneer/app/api/v1"
+	"auctioneer/app/blizz"
 	"auctioneer/app/cache"
 	"auctioneer/app/conf"
 	logging "auctioneer/app/logger"
@@ -21,6 +22,19 @@ type Auctioneer struct {
 	BaseHandler api.Handler
 }
 
+func NewApp(logger *logging.Logger, cfg *conf.Config) *Auctioneer {
+	app := new(Auctioneer)
+	app.Fib = fiber.New(fiber.Config{
+		ErrorHandler:          app.errorHandler,
+		DisableStartupMessage: true,
+	})
+	app.Fib.Use(fiberLogger.New())
+	app.log = logger
+	app.cfg = cfg
+
+	return app
+}
+
 func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 	logger, err := logging.NewLogger(cfg.LogLvl)
 	if err != nil {
@@ -30,7 +44,8 @@ func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 	auctioneer := NewApp(logger, cfg)
 	auctioneer.ctx = ctx
 	cache := cache.NewCache()
-	auctioneer.BaseHandler = api.NewBasehandler(cfg, cache)
+	blizzClient := blizz.NewClient(&cfg.BlizzApiCfg, cache)
+	auctioneer.BaseHandler = api.NewBasehandler(blizzClient)
 
 	auctioneer.SetupRoutes()
 
@@ -38,19 +53,11 @@ func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 }
 
 func (a *Auctioneer) MakeBlizzAuth() error {
-	if err := a.BaseHandler.V1MakeBlizzAuth(); err != nil {
-		return err
-	}
-
-	return nil
+	return a.BaseHandler.V1MakeBlizzAuth()
 }
 
 func (a *Auctioneer) GetRealmList() error {
-	if err := a.BaseHandler.V1GetBlizzRealms(); err != nil {
-		return err
-	}
-
-	return nil
+	return a.BaseHandler.V1GetBlizzRealms()
 }
 
 func (a *Auctioneer) Serve() {
@@ -66,19 +73,6 @@ func (a *Auctioneer) Serve() {
 	if err := a.Fib.Shutdown(); err != nil {
 		a.log.Fatalf("server Shutdown Failed:%+s", err)
 	}
-}
-
-func NewApp(logger *logging.Logger, cfg *conf.Config) *Auctioneer {
-	app := new(Auctioneer)
-	app.Fib = fiber.New(fiber.Config{
-		ErrorHandler:          app.errorHandler,
-		DisableStartupMessage: true,
-	})
-	app.Fib.Use(fiberLogger.New())
-	app.log = logger
-	app.cfg = cfg
-
-	return app
 }
 
 func (a *Auctioneer) SetupRoutes() {

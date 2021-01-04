@@ -2,8 +2,7 @@ package api
 
 import (
 	"auctioneer/app/api/v1"
-	"auctioneer/app/cache"
-	"auctioneer/app/conf"
+	"auctioneer/app/blizz"
 )
 
 type Handler interface {
@@ -16,9 +15,9 @@ type BaseHandler struct {
 	V1 v1.Handler
 }
 
-func NewBasehandler(cfg *conf.Config, cache cache.Cache) Handler {
+func NewBasehandler(blizzClient blizz.Client) Handler {
 	return &BaseHandler{
-		V1: v1.NewBasehandlerv1(&cfg.BlizzApiCfg, cache),
+		V1: v1.NewBasehandlerv1(blizzClient),
 	}
 }
 

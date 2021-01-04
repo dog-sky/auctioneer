@@ -2,8 +2,6 @@ package v1
 
 import (
 	"auctioneer/app/blizz"
-	"auctioneer/app/cache"
-	"auctioneer/app/conf"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -14,20 +12,20 @@ type Handler interface {
 }
 
 type V1Handler struct {
-	BlizzClient blizz.Client
+	blizzClient blizz.Client
 	// log      *logging.Logger
 }
 
-func NewBasehandlerv1(blizzCfg *conf.BlizzApiCfg, cache cache.Cache) Handler {
+func NewBasehandlerv1(blizzClient blizz.Client) Handler {
 	return &V1Handler{
-		BlizzClient: blizz.NewClient(blizzCfg, cache),
+		blizzClient: blizzClient,
 	}
 }
 
 func (h *V1Handler) MakeBlizzAuth() error {
-	return h.BlizzClient.MakeBlizzAuth()
+	return h.blizzClient.MakeBlizzAuth()
 }
 
 func (h *V1Handler) GetBlizzRealms() error {
-	return h.BlizzClient.GetBlizzRealms()
+	return h.blizzClient.GetBlizzRealms()
 }
