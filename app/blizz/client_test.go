@@ -17,8 +17,6 @@ var blizzClient Client
 
 func init() {
 	srv := serverMock()
-	// defer srv.Close()
-
 	cache := cache.NewCache()
 	cfg := conf.Config{
 		BlizzApiCfg: conf.BlizzApiCfg{

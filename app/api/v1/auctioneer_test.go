@@ -1,13 +1,11 @@
 package v1_test
 
 import (
-	"testing"
-	// "time"
 	"fmt"
 	"io/ioutil"
 	"strings"
+	"testing"
 
-	// "auctioneer/app/api"
 	"auctioneer/app/api/v1"
 	server "auctioneer/app/auctioneer"
 	"auctioneer/app/blizz"
@@ -15,14 +13,11 @@ import (
 	logging "auctioneer/app/logger"
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
-	// "github.com/gofiber/fiber/v2"
 	"net/http/httptest"
 )
 
 func newV1handler() v1.Handler {
-	return &v1.V1Handler{
-		BlizzClient: &mockBlizzClient{},
-	}
+	return v1.NewBasehandlerv1(&mockBlizzClient{})
 }
 
 type mockHandler struct {

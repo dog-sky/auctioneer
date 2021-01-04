@@ -15,7 +15,7 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 		)
 	}
 
-	realmID := h.BlizzClient.GetRealmID(params.RealmName)
+	realmID := h.blizzClient.GetRealmID(params.RealmName)
 	if realmID == 0 {
 		return fiber.NewError(
 			fiber.StatusNotFound,
@@ -26,7 +26,7 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 	res := new(ResponseV1)
 	res.Success = true
 
-	searchResult, err := h.BlizzClient.SearchItem(params.ItemName, params.Region)
+	searchResult, err := h.blizzClient.SearchItem(params.ItemName, params.Region)
 	if err != nil {
 		return fiber.NewError(
 			fiber.StatusBadRequest,
@@ -40,7 +40,7 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 		)
 	}
 
-	data, err := h.BlizzClient.GetAuctionData(realmID, params.Region)
+	data, err := h.blizzClient.GetAuctionData(realmID, params.Region)
 	if err != nil {
 		return fiber.NewError(
 			fiber.StatusBadRequest,
