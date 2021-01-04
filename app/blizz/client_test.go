@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"io"
 )
 
 var blizzClient Client
@@ -183,13 +184,13 @@ func auctionDataMock(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if strings.Contains(q, "dynamic-wrong_time") {
-		w.Header().Set("last-modified", "Sat, 020 Jan 2021 12:08:43 GMT")
+		w.Header().Set("last-modified", "Not a time")
 		return
 	}
 
 	if strings.Contains(q, "dynamic-wrong_json") {
 		w.Header().Set("last-modified", "Sat, 2 Jan 2021 12:08:43 GMT")
-		w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+		_, _ = io.WriteString(w, "hello")
 		return
 	}
 

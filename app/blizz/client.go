@@ -47,13 +47,7 @@ func NewClient(blizzCfg *conf.BlizzApiCfg, cache cache.Cache) Client {
 }
 
 func (c *client) SearchItem(itemName string, region string) (*ItemResult, error) {
-	requestURL, err := url.Parse(c.urls[region] + "/data/wow/search/item")
-	if err != nil {
-		return nil, fmt.Errorf(
-			"error creating item search request url: %v",
-			err,
-		)
-	}
+	requestURL, _ := url.Parse(c.urls[region] + "/data/wow/search/item")
 	q := requestURL.Query()
 	q.Set("namespace", fmt.Sprintf("static-%s", region))
 	q.Set("access_token", c.token.AccessToken)
@@ -115,10 +109,7 @@ func (c *client) GetBlizzRealms() error {
 }
 
 func (c *client) getBlizzRealms(region string) error {
-	requestURL, err := url.Parse(c.urls[region] + "/data/wow/realm/index")
-	if err != nil {
-		return fmt.Errorf("error creating realm request url: %v", err)
-	}
+	requestURL, _ := url.Parse(c.urls[region] + "/data/wow/realm/index")
 	q := requestURL.Query()
 	q.Set("namespace", fmt.Sprintf("dynamic-%s", region))
 	q.Set("locale", "ru_RU")
@@ -172,11 +163,7 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 		return data, nil
 	}
 
-	requestURL, err := url.Parse(c.urls[region] + fmt.Sprintf("/data/wow/connected-realm/%d/auctions", realmID))
-	if err != nil {
-		return nil, fmt.Errorf("error creating action request url: %v", err)
-	}
-
+	requestURL, _ := url.Parse(c.urls[region] + fmt.Sprintf("/data/wow/connected-realm/%d/auctions", realmID))
 	q := requestURL.Query()
 	q.Set("namespace", fmt.Sprintf("dynamic-%s", region))
 	q.Set("access_token", c.token.AccessToken)
