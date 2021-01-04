@@ -33,7 +33,7 @@ Query params | Description
 ------------ | -------------
 `item_name` *required | Name of item to search
 `region` *required | Region of realm. Choose `eu` or `us`
-`realm_name` *required | Name realm in the region
+`realm_name` *required | Name of realm in the region
 
 
 ## Getting Started 👲
