@@ -31,7 +31,7 @@ type client struct {
 	urls       map[string]string
 }
 
-func NewClient(blizzCfg *conf.BlizzApiCfg, cache cache.Cache) Client {
+func NewClient(blizzCfg *conf.BlizzApiCfg) Client {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -41,7 +41,7 @@ func NewClient(blizzCfg *conf.BlizzApiCfg, cache cache.Cache) Client {
 	return &client{
 		cfg:        blizzCfg,
 		httpClient: &http.Client{Transport: tr},
-		cache:      cache,
+		cache:      cache.NewCache(),
 		urls:       urlsMap,
 	}
 }
