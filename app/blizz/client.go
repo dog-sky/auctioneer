@@ -62,14 +62,7 @@ func (c *client) SearchItem(itemName string, region string) (*ItemResult, error)
 	}
 	requestURL.RawQuery = q.Encode()
 
-	request, err := http.NewRequest(http.MethodGet, requestURL.String(), nil)
-	if err != nil {
-		return nil, fmt.Errorf(
-			"error creating item search request: %v",
-			err,
-		)
-	}
-
+	request, _ := http.NewRequest(http.MethodGet, requestURL.String(), nil)
 	response, err := c.httpClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf(
@@ -116,14 +109,7 @@ func (c *client) getBlizzRealms(region string) error {
 	q.Set("access_token", c.token.AccessToken)
 	requestURL.RawQuery = q.Encode()
 
-	request, err := http.NewRequest(http.MethodGet, requestURL.String(), nil)
-	if err != nil {
-		return fmt.Errorf(
-			"error creating realm request: %v, region %s",
-			err, region,
-		)
-	}
-
+	request, _ := http.NewRequest(http.MethodGet, requestURL.String(), nil)
 	response, err := c.httpClient.Do(request)
 	if err != nil {
 		return fmt.Errorf(
@@ -169,13 +155,7 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 	q.Set("access_token", c.token.AccessToken)
 	requestURL.RawQuery = q.Encode()
 
-	request, err := http.NewRequest(http.MethodGet, requestURL.String(), nil)
-	if err != nil {
-		return nil, fmt.Errorf(
-			"error creating action request: %v", err,
-		)
-	}
-
+	request, _ := http.NewRequest(http.MethodGet, requestURL.String(), nil)
 	response, err := c.httpClient.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf(
@@ -211,15 +191,7 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 func (c *client) MakeBlizzAuth() error {
 	body := strings.NewReader("grant_type=client_credentials")
 
-	request, err := http.NewRequest(
-		http.MethodPost,
-		c.cfg.AUTHUrl,
-		body,
-	)
-	if err != nil {
-		return fmt.Errorf("error creating request: %v", err)
-	}
-
+	request, _ := http.NewRequest(http.MethodPost, c.cfg.AUTHUrl, body)
 	request.SetBasicAuth(c.cfg.ClientID, c.cfg.ClientSecret)
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
