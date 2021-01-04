@@ -1,14 +1,15 @@
 package server
 
 import (
+	"context"
+	"fmt"
+
 	"auctioneer/app/api"
 	"auctioneer/app/api/v1"
 	"auctioneer/app/blizz"
 	"auctioneer/app/conf"
 	logging "auctioneer/app/logger"
 	"auctioneer/app/router"
-	"context"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	fiberLogger "github.com/gofiber/fiber/v2/middleware/logger"
 )
@@ -75,8 +76,10 @@ func (a *Auctioneer) Serve() {
 
 func (a *Auctioneer) SetupRoutes() {
 	v1 := a.Fib.Group("/api/v1")
+	system := a.Fib.Group("/")
 
 	router.SetupV1Routes(v1, a.BaseHandler.V1Handler())
+	router.SetupSystemRoutes(system, a.BaseHandler.SystemHandler())
 }
 
 func (a *Auctioneer) errorHandler(c *fiber.Ctx, incomingError error) error {
