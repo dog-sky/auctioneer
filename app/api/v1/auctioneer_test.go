@@ -288,3 +288,14 @@ func TestV1Handler_SearchItemData(t *testing.T) {
 		})
 	}
 }
+
+
+func TestV1Handler_TestHandler(t *testing.T) {
+	h := newV1handler()
+
+	err := h.MakeBlizzAuth()
+	assert.NoError(t, err)
+
+	err = h.GetBlizzRealms()
+	assert.NoError(t, err)
+}
