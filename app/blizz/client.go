@@ -52,15 +52,13 @@ func (c *client) SearchItem(itemName string, region string) (*ItemResult, error)
 	q.Set("namespace", fmt.Sprintf("static-%s", region))
 	q.Set("access_token", c.token.AccessToken)
 	q.Set("_page", "1")
-	q.Set("_pageSize", "25")
-	if itemName != "" {
-		if isRussian(itemName) {
-			// Проверяем либо кирилицу
-			q.Set("name.ru_RU", itemName)
-		} else {
-			// либо устанавливает английский язык для поиска предмета
-			q.Set("name.en_US", itemName)
-		}
+	q.Set("_pageSize", "25") // TODO это значение может быть вариативным и может быть передано в параметрах в будущем
+	if isRussian(itemName) {
+		// Проверяем либо кирилицу
+		q.Set("name.ru_RU", itemName)
+	} else {
+		// либо устанавливает английский язык для поиска предмета
+		q.Set("name.en_US", itemName)
 	}
 	requestURL.RawQuery = q.Encode()
 
