@@ -97,7 +97,10 @@ func TestClient_searchItemErrJson(t *testing.T) {
 	_ = errClient.MakeBlizzAuth()
 
 	res, err := errClient.SearchItem("error_item_search", "eu")
-	println("ERROR: ", err.Error())
+	assert.Error(t, err)
+	assert.Nil(t, res)
+
+	res, err = errClient.SearchItem("error_item_search", "gr")
 	assert.Error(t, err)
 	assert.Nil(t, res)
 }
@@ -109,24 +112,41 @@ func TestClient_getAuctionData(t *testing.T) {
 }
 
 func TestClient_getAuctionDataError(t *testing.T) {
+
+	srv := serverMock()
+	cache := cache.NewCache()
+	blizzCfg := conf.BlizzApiCfg{
+		EuAPIUrl:     srv.URL,
+		UsAPIUrl:     srv.URL,
+		AUTHUrl:      srv.URL + "/oauth/token",
+		ClientSecret: "secret",
+		RegionList:   []string{"eu", "us"},
+	}
+	cfgErr := &conf.Config{
+		BlizzApiCfg: blizzCfg,
+	}
+
+	errClient := NewClient(&cfgErr.BlizzApiCfg, cache)
+	_ = errClient.MakeBlizzAuth()
+
 	tests := []struct {
 		name   string
-		region string
+		server int
 	}{
 		{
 			name:   "Server status Err",
-			region: "us",
+			server: 502,
 		}, {
 			name:   "Time Decode Err",
-			region: "wrong_time",
+			server: 503,
 		}, {
 			name:   "JSON Decode Err",
-			region: "wrong_json",
+			server: 504,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			res, err := blizzClient.GetAuctionData(501, "wrong_json")
+			res, err := errClient.GetAuctionData(tt.server, "eu")
 			assert.Error(t, err)
 			assert.Nil(t, res)
 		})
@@ -138,7 +158,7 @@ func serverMock() *httptest.Server {
 	handler.HandleFunc("/oauth/token", authMock)
 	handler.HandleFunc("/data/wow/realm/index", realmListMock)
 	handler.HandleFunc("/data/wow/search/item", searchItemMock)
-	handler.HandleFunc("/data/wow/connected-realm/501/auctions", auctionDataMock)
+	handler.HandleFunc("/data/wow/connected-realm/", auctionDataMock)
 
 	srv := httptest.NewServer(handler)
 
@@ -172,6 +192,18 @@ func realmListMock(w http.ResponseWriter, r *http.Request) {
 			realm{
 				ID:   500,
 				Name: "Aggramar",
+			},
+			realm{
+				ID:   503,
+				Name: "WhronJson",
+			},
+			realm{
+				ID:   504,
+				Name: "TimeDecodeErr",
+			},
+			realm{
+				ID:   502,
+				Name: "ServerStatus",
 			},
 		},
 	}
@@ -235,17 +267,17 @@ func searchItemMock(w http.ResponseWriter, r *http.Request) {
 
 func auctionDataMock(w http.ResponseWriter, r *http.Request) {
 	q := r.RequestURI
-	if strings.Contains(q, "dynamic-us") {
+	if strings.Contains(q, "/502/") {
 		w.WriteHeader(404)
 		return
 	}
 
-	if strings.Contains(q, "dynamic-wrong_time") {
+	if strings.Contains(q, "/503/") {
 		w.Header().Set("last-modified", "Not a time")
 		return
 	}
 
-	if strings.Contains(q, "dynamic-wrong_json") {
+	if strings.Contains(q, "/504/") {
 		w.Header().Set("last-modified", "Sat, 2 Jan 2021 12:08:43 GMT")
 		_, _ = io.WriteString(w, "hello")
 		return
