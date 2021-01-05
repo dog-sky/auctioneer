@@ -25,12 +25,7 @@ type ItemQuality struct {
 	Type string `json:"type"`
 }
 
-type ItemMedia struct {
-	ID int `json:"id"`
-}
-
 type ItemData struct {
-	Media   ItemMedia    `json:"media"`
 	Name    DetailedName `json:"name"`
 	ID      int          `json:"id"`
 	Quality ItemQuality  `json:"quality"`
@@ -42,6 +37,17 @@ type ItemTesult struct {
 
 type ItemResult struct {
 	Results []ItemTesult `json:"results"`
+}
+
+type ItemAssets struct {
+	Key        string `json:"key"`
+	Value      string `json:"value"`
+	FileDataID int    `json:"file_data_id"`
+}
+
+type ItemMedia struct {
+	Assets []ItemAssets `json:"assets"`
+	ID     int          `json:"id"`
 }
 
 type AucItemModifiers struct {

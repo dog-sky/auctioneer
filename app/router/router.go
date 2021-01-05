@@ -12,4 +12,5 @@ func SetupSystemRoutes(r fiber.Router, h system.Handler) {
 
 func SetupV1Routes(r fiber.Router, h v1.Handler) {
 	r.Get("/auc_search", h.SearchItemData)
+	r.Get("/item_media/:item_id", h.SearchItemMedia)
 }

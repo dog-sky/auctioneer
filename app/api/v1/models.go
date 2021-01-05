@@ -15,3 +15,9 @@ type ResponseV1 struct {
 	Message string                  `json:"message,omitempty"`
 	Result  []*blizz.AuctionsDetail `json:"result"`
 }
+
+type ResponseV1ItemMedia struct {
+	Success bool   `json:"success"`
+	Message string `json:"message,omitempty"`
+	*blizz.ItemMedia
+}

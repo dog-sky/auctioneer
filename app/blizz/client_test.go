@@ -12,9 +12,20 @@ import (
 	"testing"
 )
 
-var blizzClient Client
+func serverMock() *httptest.Server {
+	handler := http.NewServeMux()
+	handler.HandleFunc("/oauth/token", authMock)
+	handler.HandleFunc("/data/wow/realm/index", realmListMock)
+	handler.HandleFunc("/data/wow/search/item", searchItemMock)
+	handler.HandleFunc("/data/wow/connected-realm/", auctionDataMock)
+	handler.HandleFunc("/data/wow/media/item/", itemMediaMock)
 
-func init() {
+	srv := httptest.NewServer(handler)
+
+	return srv
+}
+
+func makeBlizzClient() Client {
 	srv := serverMock()
 	cfg := conf.Config{
 		BlizzApiCfg: conf.BlizzApiCfg{
@@ -26,15 +37,18 @@ func init() {
 		},
 	}
 
-	blizzClient = NewClient(&cfg.BlizzApiCfg)
+	return NewClient(&cfg.BlizzApiCfg)
 }
 
 func TestClient_auth(t *testing.T) {
+	blizzClient := makeBlizzClient()
 	err := blizzClient.MakeBlizzAuth()
 	assert.NoError(t, err)
 }
 
 func TestClient_getRealms(t *testing.T) {
+	blizzClient := makeBlizzClient()
+	_ = blizzClient.MakeBlizzAuth()
 	c := blizzClient.(*client)
 	c.cfg.RegionList = append(c.cfg.RegionList, "gb")
 
@@ -67,6 +81,9 @@ func TestClient_getRealmsErr(t *testing.T) {
 }
 
 func TestClient_searchItem(t *testing.T) {
+	blizzClient := makeBlizzClient()
+	_ = blizzClient.MakeBlizzAuth()
+
 	res, err := blizzClient.SearchItem("Гаррош", "eu")
 	assert.NoError(t, err)
 	assert.NotNil(t, res)
@@ -81,19 +98,7 @@ func TestClient_searchItem(t *testing.T) {
 }
 
 func TestClient_searchItemErrJson(t *testing.T) {
-	srv := serverMock()
-	blizzCfg := conf.BlizzApiCfg{
-		EuAPIUrl:     srv.URL,
-		UsAPIUrl:     srv.URL,
-		AUTHUrl:      srv.URL + "/oauth/token",
-		ClientSecret: "secret",
-		RegionList:   []string{"eu", "us"},
-	}
-	cfgErr := &conf.Config{
-		BlizzApiCfg: blizzCfg,
-	}
-
-	errClient := NewClient(&cfgErr.BlizzApiCfg)
+	errClient := makeBlizzClient()
 	_ = errClient.MakeBlizzAuth()
 
 	res, err := errClient.SearchItem("error_item_search", "eu")
@@ -105,7 +110,27 @@ func TestClient_searchItemErrJson(t *testing.T) {
 	assert.Nil(t, res)
 }
 
+func TestClient_searchItemMedia(t *testing.T) {
+	blizzClient := makeBlizzClient()
+	_ = blizzClient.MakeBlizzAuth()
+
+	res, err := blizzClient.GetItemMedia("500")
+	assert.NoError(t, err)
+	assert.NotNil(t, res)
+
+	res, err = blizzClient.GetItemMedia("504")
+	assert.Error(t, err)
+	assert.Nil(t, res)
+
+	res, err = blizzClient.GetItemMedia("502")
+	assert.Error(t, err)
+	assert.Nil(t, res)
+}
+
 func TestClient_getAuctionData(t *testing.T) {
+	blizzClient := makeBlizzClient()
+	_ = blizzClient.MakeBlizzAuth()
+
 	res, err := blizzClient.GetAuctionData(501, "eu")
 	assert.NoError(t, err)
 	assert.NotNil(t, res)
@@ -117,20 +142,7 @@ func TestClient_getAuctionData(t *testing.T) {
 }
 
 func TestClient_getAuctionDataError(t *testing.T) {
-
-	srv := serverMock()
-	blizzCfg := conf.BlizzApiCfg{
-		EuAPIUrl:     srv.URL,
-		UsAPIUrl:     srv.URL,
-		AUTHUrl:      srv.URL + "/oauth/token",
-		ClientSecret: "secret",
-		RegionList:   []string{"eu", "us"},
-	}
-	cfgErr := &conf.Config{
-		BlizzApiCfg: blizzCfg,
-	}
-
-	errClient := NewClient(&cfgErr.BlizzApiCfg)
+	errClient := makeBlizzClient()
 	_ = errClient.MakeBlizzAuth()
 
 	tests := []struct {
@@ -155,18 +167,6 @@ func TestClient_getAuctionDataError(t *testing.T) {
 			assert.Nil(t, res)
 		})
 	}
-}
-
-func serverMock() *httptest.Server {
-	handler := http.NewServeMux()
-	handler.HandleFunc("/oauth/token", authMock)
-	handler.HandleFunc("/data/wow/realm/index", realmListMock)
-	handler.HandleFunc("/data/wow/search/item", searchItemMock)
-	handler.HandleFunc("/data/wow/connected-realm/", auctionDataMock)
-
-	srv := httptest.NewServer(handler)
-
-	return srv
 }
 
 func authMock(w http.ResponseWriter, r *http.Request) {
@@ -232,9 +232,6 @@ func searchItemMock(w http.ResponseWriter, r *http.Request) {
 		Results: []ItemTesult{
 			{
 				Data: ItemData{
-					Media: ItemMedia{
-						ID: 1,
-					},
 					Name: DetailedName{
 						RuRU: "Оправдание Гарроша",
 						EnGB: "Garrosh's Pardon",
@@ -248,9 +245,6 @@ func searchItemMock(w http.ResponseWriter, r *http.Request) {
 			},
 			{
 				Data: ItemData{
-					Media: ItemMedia{
-						ID: 2,
-					},
 					Name: DetailedName{
 						RuRU: "Боевой топор авангарда Гарроша",
 						EnGB: "Garrosh's Vanguard Battleaxe",
@@ -267,6 +261,34 @@ func searchItemMock(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(items)
+}
+
+func itemMediaMock(w http.ResponseWriter, r *http.Request) {
+	q := r.RequestURI
+	if strings.Contains(q, "/502") {
+		w.WriteHeader(404)
+		return
+	}
+
+	if strings.Contains(q, "/504") {
+		_, _ = io.WriteString(w, "hello")
+		w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+		return
+	}
+
+	itemMedia := ItemMedia{
+		Assets: []ItemAssets{
+			ItemAssets{
+				Key:        "icon",
+				Value:      "https://render-eu.worldofwarcraft.com/icons/56/inv_sword_39.jpg",
+				FileDataID: 135349,
+			},
+		},
+		ID: 19019,
+	}
+
+	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+	_ = json.NewEncoder(w).Encode(itemMedia)
 }
 
 func auctionDataMock(w http.ResponseWriter, r *http.Request) {
