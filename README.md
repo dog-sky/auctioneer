@@ -26,10 +26,11 @@
 
 Route | Expected result
 ------------ | -------------
-`/api/v1/auc_search?item_name=Гаррош&region=eu&realm_name=Страж%20Смерти` | The result of the search for the requested item
+`/api/v1/auc_search?item_name={{string}}&region={{string}}&realm_name={{string}}` | The result of the search for the requested item
+`/api/v1/item_media/{{int}}` | Awailable media for requested item ID
 
 
-Query params | Description
+`auc search` query params | Description
 ------------ | -------------
 `item_name` *required | Name of item to search
 `region` *required | Region of realm. Choose `eu` or `us`
