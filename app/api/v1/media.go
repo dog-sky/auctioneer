@@ -11,12 +11,10 @@ func (h *V1Handler) SearchItemMedia(c *fiber.Ctx) error {
 
 	res, err := h.blizzClient.GetItemMedia(itemID)
 	if err != nil {
-		if err != nil {
-			return fiber.NewError(
-				fiber.StatusBadRequest,
-				err.Error(),
-			)
-		}
+		return fiber.NewError(
+			fiber.StatusBadRequest,
+			err.Error(),
+		)
 	}
 
 	if res == nil {
