@@ -19,6 +19,7 @@ type Client interface {
 	GetBlizzRealms() error
 	MakeBlizzAuth() error
 	GetRealmID(string) int
+	GetItemMedia(itemID string) (*ItemMedia, error)
 	SearchItem(itemName string, region string) (*ItemResult, error)
 	GetAuctionData(realmID int, region string) ([]*AuctionsDetail, error)
 }
@@ -39,10 +40,13 @@ func NewClient(blizzCfg *conf.BlizzApiCfg) Client {
 	urlsMap["eu"] = blizzCfg.EuAPIUrl
 	urlsMap["us"] = blizzCfg.UsAPIUrl
 	return &client{
-		cfg:        blizzCfg,
-		httpClient: &http.Client{Transport: tr},
-		cache:      cache.NewCache(),
-		urls:       urlsMap,
+		cfg: blizzCfg,
+		httpClient: &http.Client{
+			Transport: tr,
+			Timeout:   time.Second * 10,
+		},
+		cache: cache.NewCache(),
+		urls:  urlsMap,
 	}
 }
 
@@ -185,6 +189,36 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 	c.setAuctionData(realmID, region, auctionData, &updatedAtParsed)
 
 	return auctionData.Auctions, nil
+}
+
+func (c *client) GetItemMedia(itemID string) (*ItemMedia, error) {
+	requestURL, _ := url.Parse(c.urls["eu"] + fmt.Sprintf("/data/wow/media/item/%s", itemID))
+	q := requestURL.Query()
+	q.Set("namespace", "static-eu")
+	q.Set("access_token", c.token.AccessToken)
+	requestURL.RawQuery = q.Encode()
+
+	request, _ := http.NewRequest(http.MethodGet, requestURL.String(), nil)
+	response, err := c.httpClient.Do(request)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"error making get item media request: %v", err,
+		)
+	}
+	if response.StatusCode != fiber.StatusOK {
+		return nil, fmt.Errorf(
+			"error making get item mdeia request, status: %v", response.Status,
+		)
+	}
+	defer response.Body.Close()
+
+	itemMedia := new(ItemMedia)
+	if err := json.NewDecoder(response.Body).Decode(itemMedia); err != nil {
+		return nil, fmt.Errorf(
+			"error unmarshaling item media response: %v", err,
+		)
+	}
+	return itemMedia, nil
 }
 
 func (c *client) MakeBlizzAuth() error {

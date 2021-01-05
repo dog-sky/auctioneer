@@ -7,6 +7,7 @@ import (
 
 type Handler interface {
 	SearchItemData(*fiber.Ctx) error
+	SearchItemMedia(c *fiber.Ctx) error
 	MakeBlizzAuth() error
 	GetBlizzRealms() error
 }
