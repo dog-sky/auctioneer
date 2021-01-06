@@ -50,6 +50,22 @@ func NewClient(blizzCfg *conf.BlizzApiCfg) Client {
 	}
 }
 
+func (c *client) makeGetRequest(requestURL string) (*http.Response, error) {
+	request, _ := http.NewRequest(http.MethodGet, requestURL, nil)
+	response, err := c.httpClient.Do(request)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"error making get request: %v", err,
+		)
+	}
+	if response.StatusCode != fiber.StatusOK {
+		return nil, fmt.Errorf(
+			"error making get request, status: %v", response.Status,
+		)
+	}
+	return response, nil
+}
+
 func (c *client) SearchItem(itemName string, region string) (*ItemResult, error) {
 	requestURL, _ := url.Parse(c.urls[region] + "/data/wow/search/item")
 	q := requestURL.Query()
@@ -66,21 +82,10 @@ func (c *client) SearchItem(itemName string, region string) (*ItemResult, error)
 	}
 	requestURL.RawQuery = q.Encode()
 
-	request, _ := http.NewRequest(http.MethodGet, requestURL.String(), nil)
-	response, err := c.httpClient.Do(request)
+	response, err := c.makeGetRequest(requestURL.String())
 	if err != nil {
-		return nil, fmt.Errorf(
-			"error making search item request: %v",
-			err,
-		)
+		return nil, fmt.Errorf("err making SEARCH ITEM request: %v", err)
 	}
-	if response.StatusCode != fiber.StatusOK {
-		return nil, fmt.Errorf(
-			"error making search item request, status: %v",
-			response.Status,
-		)
-	}
-
 	defer response.Body.Close()
 
 	itemData := new(ItemResult)
@@ -112,19 +117,9 @@ func (c *client) getBlizzRealms(region string) error {
 	q.Set("access_token", c.token.AccessToken)
 	requestURL.RawQuery = q.Encode()
 
-	request, _ := http.NewRequest(http.MethodGet, requestURL.String(), nil)
-	response, err := c.httpClient.Do(request)
+	response, err := c.makeGetRequest(requestURL.String())
 	if err != nil {
-		return fmt.Errorf(
-			"error making get realm request: %v, region %s",
-			err, region,
-		)
-	}
-	if response.StatusCode != fiber.StatusOK {
-		return fmt.Errorf(
-			"error making get realm request, status: %v, region %s",
-			response.Status, region,
-		)
+		return fmt.Errorf("err making GET REALM request: %v", err)
 	}
 	defer response.Body.Close()
 
@@ -139,22 +134,6 @@ func (c *client) getBlizzRealms(region string) error {
 	c.setRealms(realmData)
 
 	return nil
-}
-
-func (c *client) makeGetRequest(requestURL string) (*http.Response, error) {
-	request, _ := http.NewRequest(http.MethodGet, requestURL, nil)
-	response, err := c.httpClient.Do(request)
-	if err != nil {
-		return nil, fmt.Errorf(
-			"error making get request: %v", err,
-		)
-	}
-	if response.StatusCode != fiber.StatusOK {
-		return nil, fmt.Errorf(
-			"error making get request, status: %v", response.Status,
-		)
-	}
-	return response, nil
 }
 
 func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, error) {
