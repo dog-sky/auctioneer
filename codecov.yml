@@ -1,3 +1,2 @@
 ignore:
   - "app/auctioneer"
-  # - "app/api/handler.go"
