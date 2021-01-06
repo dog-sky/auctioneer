@@ -11,10 +11,8 @@ import (
 func TestSetup(t *testing.T) {
 	cfg := new(conf.Config)
 	cfg.LogLvl = "INFO"
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx := context.Background()
 
 	_, err := Setup(ctx, cfg)
 	assert.NoError(t, err)
-
-	cancel()
 }
