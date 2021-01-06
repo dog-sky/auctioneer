@@ -1,4 +1,3 @@
 ignore:
-  - "app/router"
   - "app/auctioneer"
-  - "app/api/handler.go"
+  # - "app/api/handler.go"

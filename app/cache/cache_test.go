@@ -6,6 +6,7 @@ import (
 
 	"auctioneer/app/blizz"
 	"auctioneer/app/cache"
+
 	"github.com/stretchr/testify/assert"
 )
 

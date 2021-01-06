@@ -1,8 +1,10 @@
 package v1_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http/httptest"
 	"testing"
 
 	"auctioneer/app/api/v1"
@@ -10,9 +12,9 @@ import (
 	"auctioneer/app/blizz"
 	"auctioneer/app/conf"
 	logging "auctioneer/app/logger"
-	"encoding/json"
+	"auctioneer/app/router"
+
 	"github.com/stretchr/testify/assert"
-	"net/http/httptest"
 )
 
 func Test_SearchItemMedia(t *testing.T) {
@@ -23,7 +25,7 @@ func Test_SearchItemMedia(t *testing.T) {
 		v1:     newV1handler(),
 		system: newSystemHandler(),
 	}
-	app.SetupRoutes()
+	router.SetupRoutes(app.Fib, app.BaseHandler)
 
 	testCases := []struct {
 		name      string
