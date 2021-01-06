@@ -1,15 +1,17 @@
 package blizz
 
 import (
-	"auctioneer/app/conf"
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
-	"github.com/twinj/uuid"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"auctioneer/app/conf"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/twinj/uuid"
 )
 
 func serverMock() *httptest.Server {

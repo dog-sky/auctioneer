@@ -1,16 +1,18 @@
 package blizz
 
 import (
-	"auctioneer/app/cache"
-	"auctioneer/app/conf"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	"auctioneer/app/cache"
+	"auctioneer/app/conf"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 const layoutUS = "Mon, 2 Jan 2006 15:04:05 MST"
@@ -63,6 +65,7 @@ func (c *client) makeGetRequest(requestURL string) (*http.Response, error) {
 			"error making get request, status: %v", response.Status,
 		)
 	}
+
 	return response, nil
 }
 
@@ -72,7 +75,7 @@ func (c *client) SearchItem(itemName string, region string) (*ItemResult, error)
 	q.Set("namespace", fmt.Sprintf("static-%s", region))
 	q.Set("access_token", c.token.AccessToken)
 	q.Set("_page", "1")
-	q.Set("_pageSize", "25") // TODO это значение может быть вариативным и может быть передано в параметрах в будущем
+	q.Set("_pageSize", "25")
 	if isRussian(itemName) {
 		// Проверяем либо кирилицу
 		q.Set("name.ru_RU", itemName)
@@ -91,8 +94,7 @@ func (c *client) SearchItem(itemName string, region string) (*ItemResult, error)
 	itemData := new(ItemResult)
 	if err := json.NewDecoder(response.Body).Decode(itemData); err != nil {
 		return nil, fmt.Errorf(
-			"error unmarshaling realm list response: %v",
-			err,
+			"error unmarshaling realm list response: %v", err,
 		)
 	}
 
@@ -197,6 +199,7 @@ func (c *client) GetItemMedia(itemID string) (*ItemMedia, error) {
 			"error unmarshaling item media response: %v", err,
 		)
 	}
+
 	return itemMedia, nil
 }
 
