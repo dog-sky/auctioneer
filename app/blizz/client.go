@@ -11,6 +11,7 @@ import (
 
 	"auctioneer/app/cache"
 	"auctioneer/app/conf"
+	"auctioneer/app/logger"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,6 +22,7 @@ type Client interface {
 	GetBlizzRealms() error
 	MakeBlizzAuth() error
 	GetRealmID(string) int
+	BlizzAuthRoutine()
 	GetItemMedia(itemID string) (*ItemMedia, error)
 	SearchItem(itemName string, region string) (*ItemResult, error)
 	GetAuctionData(realmID int, region string) ([]*AuctionsDetail, error)
@@ -32,9 +34,10 @@ type client struct {
 	cfg        *conf.BlizzApiCfg
 	httpClient *http.Client
 	urls       map[string]string
+	log        *logging.Logger
 }
 
-func NewClient(blizzCfg *conf.BlizzApiCfg) Client {
+func NewClient(logger *logging.Logger, blizzCfg *conf.BlizzApiCfg) Client {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -49,6 +52,7 @@ func NewClient(blizzCfg *conf.BlizzApiCfg) Client {
 		},
 		cache: cache.NewCache(),
 		urls:  urlsMap,
+		log:   logger,
 	}
 }
 
@@ -201,6 +205,19 @@ func (c *client) GetItemMedia(itemID string) (*ItemMedia, error) {
 	}
 
 	return itemMedia, nil
+}
+
+func (c *client) BlizzAuthRoutine() {
+	delay := time.Duration(24) * time.Hour
+	t := time.NewTicker(delay)
+	defer t.Stop()
+
+	for range t.C {
+		c.log.Info("Making blizzard auth call")
+		if err := c.MakeBlizzAuth(); err != nil {
+			c.log.Errorf("error making blizzard auth request: %v", err)
+		}
+	}
 }
 
 func (c *client) MakeBlizzAuth() error {
