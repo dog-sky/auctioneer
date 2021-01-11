@@ -36,6 +36,8 @@ func (h *mockHandler) SystemHandler() system.Handler {
 
 type mockBlizzClient struct{}
 
+func (c *mockBlizzClient) BlizzAuthRoutine() {}
+
 func (c *mockBlizzClient) GetBlizzRealms() error {
 	return nil
 }

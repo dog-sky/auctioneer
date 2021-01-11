@@ -44,7 +44,9 @@ func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 
 	auctioneer := NewApp(logger, cfg)
 	auctioneer.ctx = ctx
-	blizzClient := blizz.NewClient(&cfg.BlizzApiCfg)
+	blizzClient := blizz.NewClient(logger, &cfg.BlizzApiCfg)
+	go blizzClient.BlizzAuthRoutine() // Сервис переавторизовывается в апи близзарда раз в 24 часа.
+
 	auctioneer.BaseHandler = api.NewBasehandler(blizzClient)
 
 	router.SetupRoutes(auctioneer.Fib, auctioneer.BaseHandler)
