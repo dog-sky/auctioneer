@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"auctioneer/app/conf"
+	"auctioneer/app/logger"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/twinj/uuid"
@@ -39,7 +40,8 @@ func makeBlizzClient() Client {
 		},
 	}
 
-	return NewClient(&cfg.BlizzApiCfg)
+	log, _ := logging.NewLogger("ERROR")
+	return NewClient(log, &cfg.BlizzApiCfg)
 }
 
 func TestClient_auth(t *testing.T) {
@@ -75,7 +77,8 @@ func TestClient_getRealmsErr(t *testing.T) {
 		BlizzApiCfg: blizzCfg,
 	}
 
-	errClient := NewClient(&cfgErr.BlizzApiCfg)
+	log, _ := logging.NewLogger("ERROR")
+	errClient := NewClient(log, &cfgErr.BlizzApiCfg)
 	_ = errClient.MakeBlizzAuth()
 
 	err := errClient.GetBlizzRealms()
