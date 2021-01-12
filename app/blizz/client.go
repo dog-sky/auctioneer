@@ -175,7 +175,7 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 			"error parsing last-modified header in auction response: %v", err,
 		)
 	}
-	c.setAuctionData(realmID, region, auctionData, &updatedAtParsed)
+	c.cache.SetAuctionData(realmID, region, auctionData, &updatedAtParsed)
 
 	return auctionData.Auctions, nil
 }
@@ -245,8 +245,4 @@ func (c *client) getAuctionData(realmID int, region string) []*AuctionsDetail {
 	default:
 		return nil
 	}
-}
-
-func (c *client) setAuctionData(realmID int, region string, auctionData *AuctionData, updatedAt *time.Time) {
-	c.cache.SetAuctionData(realmID, region, auctionData, updatedAt)
 }
