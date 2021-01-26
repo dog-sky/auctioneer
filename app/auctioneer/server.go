@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"auctioneer/app/api"
 	"auctioneer/app/api/v1"
@@ -13,6 +14,10 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	fiberLogger "github.com/gofiber/fiber/v2/middleware/logger"
+)
+
+const (
+	readTimeOut = 3 * time.Second
 )
 
 type Auctioneer struct {
@@ -28,6 +33,7 @@ func NewApp(logger *logging.Logger, cfg *conf.Config) *Auctioneer {
 	app.Fib = fiber.New(fiber.Config{
 		ErrorHandler:          app.errorHandler,
 		DisableStartupMessage: true,
+		ReadTimeout:           readTimeOut,
 	})
 	app.Fib.Use(fiberLogger.New())
 	app.log = logger
