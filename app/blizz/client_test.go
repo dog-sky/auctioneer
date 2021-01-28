@@ -9,7 +9,7 @@ import (
 	"testing"
 
 	"auctioneer/app/conf"
-	"auctioneer/app/logger"
+	logging "auctioneer/app/logger"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/twinj/uuid"
@@ -194,23 +194,23 @@ func realmListMock(w http.ResponseWriter, r *http.Request) {
 
 	rlms := BlizzRealmsSearchResult{
 		Realms: []realm{
-			realm{
+			{
 				ID:   501,
 				Name: "Arathor",
 			},
-			realm{
+			{
 				ID:   500,
 				Name: "Aggramar",
 			},
-			realm{
+			{
 				ID:   503,
 				Name: "WhronJson",
 			},
-			realm{
+			{
 				ID:   504,
 				Name: "TimeDecodeErr",
 			},
-			realm{
+			{
 				ID:   502,
 				Name: "ServerStatus",
 			},
@@ -283,7 +283,7 @@ func itemMediaMock(w http.ResponseWriter, r *http.Request) {
 
 	itemMedia := ItemMedia{
 		Assets: []ItemAssets{
-			ItemAssets{
+			{
 				Key:        "icon",
 				Value:      "https://render-eu.worldofwarcraft.com/icons/56/inv_sword_39.jpg",
 				FileDataID: 135349,
@@ -306,13 +306,13 @@ func auctionDataMock(w http.ResponseWriter, r *http.Request) {
 	if strings.Contains(q, "/504/") {
 		aucData := AuctionData{
 			Auctions: []*AuctionsDetail{
-				&AuctionsDetail{
+				{
 					ID: 1,
 					Item: AcuItem{
 						ID:      2,
 						Context: 1,
 						Modifiers: []AucItemModifiers{
-							AucItemModifiers{
+							{
 								Type:  1,
 								Value: 1,
 							},
@@ -350,13 +350,13 @@ func auctionDataMock(w http.ResponseWriter, r *http.Request) {
 
 	aucData := AuctionData{
 		Auctions: []*AuctionsDetail{
-			&AuctionsDetail{
+			{
 				ID: 1,
 				Item: AcuItem{
 					ID:      2,
 					Context: 1,
 					Modifiers: []AucItemModifiers{
-						AucItemModifiers{
+						{
 							Type:  1,
 							Value: 1,
 						},
