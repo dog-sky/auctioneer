@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"auctioneer/app/api/v1"
+	v1 "auctioneer/app/api/v1"
 	server "auctioneer/app/auctioneer"
 	"auctioneer/app/blizz"
 	"auctioneer/app/conf"
@@ -41,7 +41,7 @@ func Test_SearchItemMedia(t *testing.T) {
 				Success: true,
 				ItemMedia: &blizz.ItemMedia{
 					Assets: []blizz.ItemAssets{
-						blizz.ItemAssets{
+						{
 							Key:        "hello",
 							Value:      "world",
 							FileDataID: 100,

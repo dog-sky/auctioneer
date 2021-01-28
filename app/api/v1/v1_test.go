@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"auctioneer/app/api/system"
-	"auctioneer/app/api/v1"
+	v1 "auctioneer/app/api/v1"
 	"auctioneer/app/blizz"
 )
 
@@ -59,7 +59,7 @@ func (c *mockBlizzClient) GetItemMedia(itemID string) (*blizz.ItemMedia, error) 
 	res := blizz.ItemMedia{
 		ID: 200,
 		Assets: []blizz.ItemAssets{
-			blizz.ItemAssets{
+			{
 				Key:        "hello",
 				Value:      "world",
 				FileDataID: 100,
@@ -132,13 +132,13 @@ func (c *mockBlizzClient) SearchItem(itemName string, region string) (*blizz.Ite
 func (c *mockBlizzClient) GetAuctionData(realmID int, region string) ([]*blizz.AuctionsDetail, error) {
 	if realmID == 1 {
 		return []*blizz.AuctionsDetail{
-			&blizz.AuctionsDetail{
+			{
 				ID: 1,
 				Item: blizz.AcuItem{
 					ID:      1,
 					Context: 1,
 					Modifiers: []blizz.AucItemModifiers{
-						blizz.AucItemModifiers{
+						{
 							Type:  1,
 							Value: 1,
 						},

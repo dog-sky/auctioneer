@@ -11,7 +11,7 @@ import (
 
 	"auctioneer/app/cache"
 	"auctioneer/app/conf"
-	"auctioneer/app/logger"
+	logging "auctioneer/app/logger"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -208,7 +208,7 @@ func (c *client) GetItemMedia(itemID string) (*ItemMedia, error) {
 }
 
 func (c *client) BlizzAuthRoutine() {
-	delay := time.Duration(24) * time.Hour
+	delay := 6 * time.Hour
 	t := time.NewTicker(delay)
 	defer t.Stop()
 

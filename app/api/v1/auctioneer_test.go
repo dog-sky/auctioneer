@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"auctioneer/app/api/v1"
+	v1 "auctioneer/app/api/v1"
 	server "auctioneer/app/auctioneer"
 	"auctioneer/app/blizz"
 	"auctioneer/app/conf"
@@ -40,13 +40,13 @@ func Test_SearchItemData(t *testing.T) {
 			exp: v1.ResponseV1{
 				Success: true,
 				Result: []*blizz.AuctionsDetail{
-					&blizz.AuctionsDetail{
+					{
 						ID: 1,
 						Item: blizz.AcuItem{
 							ID:      1,
 							Context: 1,
 							Modifiers: []blizz.AucItemModifiers{
-								blizz.AucItemModifiers{
+								{
 									Type:  1,
 									Value: 1,
 								},
