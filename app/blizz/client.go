@@ -2,7 +2,6 @@ package blizz
 
 import (
 	"crypto/tls"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -13,7 +12,7 @@ import (
 	"auctioneer/app/conf"
 	logging "auctioneer/app/logger"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/levigross/grequests"
 )
 
 const layoutUS = "Mon, 2 Jan 2006 15:04:05 MST"
@@ -29,44 +28,44 @@ type Client interface {
 }
 
 type client struct {
-	cache      cache.Cache
-	token      *BlizzardToken
-	cfg        *conf.BlizzApiCfg
-	httpClient *http.Client
-	urls       map[string]string
-	log        *logging.Logger
+	cache   cache.Cache
+	token   *BlizzardToken
+	cfg     *conf.BlizzApiCfg
+	session *grequests.Session
+	urls    map[string]string
+	log     *logging.Logger
 }
 
 func NewClient(logger *logging.Logger, blizzCfg *conf.BlizzApiCfg) Client {
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
 	urlsMap := make(map[string]string)
 	urlsMap["eu"] = blizzCfg.EuAPIUrl
 	urlsMap["us"] = blizzCfg.UsAPIUrl
+
+	session := grequests.NewSession(nil)
+	session.HTTPClient.Transport = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	session.HTTPClient.Timeout = time.Second * 10
+
 	return &client{
-		cfg: blizzCfg,
-		httpClient: &http.Client{
-			Transport: tr,
-			Timeout:   time.Second * 10,
-		},
-		cache: cache.NewCache(),
-		urls:  urlsMap,
-		log:   logger,
+		cfg:     blizzCfg,
+		cache:   cache.NewCache(),
+		session: session,
+		urls:    urlsMap,
+		log:     logger,
 	}
 }
 
-func (c *client) makeGetRequest(requestURL string) (*http.Response, error) {
-	request, _ := http.NewRequest(http.MethodGet, requestURL, nil)
-	response, err := c.httpClient.Do(request)
+func (c *client) makeGetRequest(requestURL string, ro *grequests.RequestOptions) (*grequests.Response, error) {
+	response, err := c.session.Get(requestURL, ro)
 	if err != nil {
 		return nil, fmt.Errorf(
 			"error making get request: %v", err,
 		)
 	}
-	if response.StatusCode != fiber.StatusOK {
+	if !response.Ok {
 		return nil, fmt.Errorf(
-			"error making get request, status: %v", response.Status,
+			"error making get request, status: %v", response.StatusCode,
 		)
 	}
 
@@ -75,28 +74,34 @@ func (c *client) makeGetRequest(requestURL string) (*http.Response, error) {
 
 func (c *client) SearchItem(itemName string, region string) (*ItemResult, error) {
 	requestURL, _ := url.Parse(c.urls[region] + "/data/wow/search/item")
-	q := requestURL.Query()
-	q.Set("namespace", fmt.Sprintf("static-%s", region))
-	q.Set("access_token", c.token.AccessToken)
-	q.Set("_page", "1")
-	q.Set("_pageSize", "25")
+
+	var locale string
 	if isRussian(itemName) {
 		// Проверяем либо кирилицу
-		q.Set("name.ru_RU", itemName)
+		locale = "name.ru_RU"
 	} else {
 		// либо устанавливает английский язык для поиска предмета
-		q.Set("name.en_US", itemName)
+		locale = "name.en_US"
 	}
-	requestURL.RawQuery = q.Encode()
 
-	response, err := c.makeGetRequest(requestURL.String())
+	ro := &grequests.RequestOptions{
+		Params: map[string]string{
+			"namespace":    fmt.Sprintf("static-%s", region),
+			"access_token": c.token.AccessToken,
+			"locale":       "ru_RU",
+			"_page":        "1",
+			"_pageSize":    "25",
+			locale:         itemName,
+		},
+	}
+
+	response, err := c.makeGetRequest(requestURL.String(), ro)
 	if err != nil {
 		return nil, fmt.Errorf("err making SEARCH ITEM request: %v", err)
 	}
-	defer response.Body.Close()
 
 	itemData := new(ItemResult)
-	if err := json.NewDecoder(response.Body).Decode(itemData); err != nil {
+	if err := response.JSON(itemData); err != nil {
 		return nil, fmt.Errorf(
 			"error unmarshaling realm list response: %v", err,
 		)
@@ -117,20 +122,22 @@ func (c *client) GetBlizzRealms() error {
 
 func (c *client) getBlizzRealms(region string) error {
 	requestURL, _ := url.Parse(c.urls[region] + "/data/wow/realm/index")
-	q := requestURL.Query()
-	q.Set("namespace", fmt.Sprintf("dynamic-%s", region))
-	q.Set("locale", "ru_RU")
-	q.Set("access_token", c.token.AccessToken)
-	requestURL.RawQuery = q.Encode()
 
-	response, err := c.makeGetRequest(requestURL.String())
+	ro := &grequests.RequestOptions{
+		Params: map[string]string{
+			"namespace":    fmt.Sprintf("dynamic-%s", region),
+			"access_token": c.token.AccessToken,
+			"locale":       "ru_RU",
+		},
+	}
+
+	response, err := c.makeGetRequest(requestURL.String(), ro)
 	if err != nil {
 		return fmt.Errorf("err making GET REALM request: %v", err)
 	}
-	defer response.Body.Close()
 
 	realmData := new(BlizzRealmsSearchResult)
-	if err := json.NewDecoder(response.Body).Decode(realmData); err != nil {
+	if err := response.JSON(realmData); err != nil {
 		return fmt.Errorf(
 			"error unmarshaling realm list response: %v, region %s",
 			err, region,
@@ -143,7 +150,6 @@ func (c *client) getBlizzRealms(region string) error {
 }
 
 func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, error) {
-
 	// Аукцион по реалму обновляется раз в час. В заголовке приходит дата обновления
 	// last-modified: Thu, 31 Dec 2020 15:08:43 GMT
 	// нужно сохранить данные локально для реалма и отдавать их из кеша в течение часа
@@ -154,21 +160,21 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 	}
 
 	requestURL, _ := url.Parse(c.urls[region] + fmt.Sprintf("/data/wow/connected-realm/%d/auctions", realmID))
-	q := requestURL.Query()
-	q.Set("namespace", fmt.Sprintf("dynamic-%s", region))
-	q.Set("access_token", c.token.AccessToken)
-	requestURL.RawQuery = q.Encode()
-
-	response, err := c.makeGetRequest(requestURL.String())
+	ro := &grequests.RequestOptions{
+		Params: map[string]string{
+			"namespace":    fmt.Sprintf("dynamic-%s", region),
+			"access_token": c.token.AccessToken,
+		},
+	}
+	response, err := c.makeGetRequest(requestURL.String(), ro)
 	if err != nil {
 		return nil, fmt.Errorf("err making AUCTION DATA request: %v", err)
 	}
-	defer response.Body.Close()
 
 	auctionData := new(AuctionData)
-	if err := json.NewDecoder(response.Body).Decode(auctionData); err != nil {
+	if err := response.JSON(auctionData); err != nil {
 		return nil, fmt.Errorf(
-			"error unmarshaling action data response: %v", err,
+			"error unmarshaling item media response: %v", err,
 		)
 	}
 
@@ -186,19 +192,19 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 
 func (c *client) GetItemMedia(itemID string) (*ItemMedia, error) {
 	requestURL, _ := url.Parse(c.urls["eu"] + fmt.Sprintf("/data/wow/media/item/%s", itemID))
-	q := requestURL.Query()
-	q.Set("namespace", "static-eu")
-	q.Set("access_token", c.token.AccessToken)
-	requestURL.RawQuery = q.Encode()
-
-	response, err := c.makeGetRequest(requestURL.String())
+	ro := &grequests.RequestOptions{
+		Params: map[string]string{
+			"namespace":    "static-eu",
+			"access_token": c.token.AccessToken,
+		},
+	}
+	response, err := c.makeGetRequest(requestURL.String(), ro)
 	if err != nil {
 		return nil, fmt.Errorf("err making ITEM MEDIA request: %v", err)
 	}
-	defer response.Body.Close()
 
 	itemMedia := new(ItemMedia)
-	if err := json.NewDecoder(response.Body).Decode(itemMedia); err != nil {
+	if err := response.JSON(itemMedia); err != nil {
 		return nil, fmt.Errorf(
 			"error unmarshaling item media response: %v", err,
 		)
@@ -222,19 +228,21 @@ func (c *client) BlizzAuthRoutine() {
 
 func (c *client) MakeBlizzAuth() error {
 	body := strings.NewReader("grant_type=client_credentials")
+	ro := &grequests.RequestOptions{
+		RequestBody: body,
+		Auth:        []string{c.cfg.ClientID, c.cfg.ClientSecret},
+		Headers: map[string]string{
+			"Content-Type": "application/x-www-form-urlencoded",
+		},
+	}
 
-	request, _ := http.NewRequest(http.MethodPost, c.cfg.AUTHUrl, body)
-	request.SetBasicAuth(c.cfg.ClientID, c.cfg.ClientSecret)
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-	response, err := c.httpClient.Do(request)
+	response, err := c.session.Post(c.cfg.AUTHUrl, ro)
 	if err != nil {
 		return fmt.Errorf("error making blizzard auth request: %v", err)
 	}
-	defer response.Body.Close()
 
 	tokenData := new(BlizzardToken)
-	if err := json.NewDecoder(response.Body).Decode(tokenData); err != nil {
+	if err := response.JSON(tokenData); err != nil {
 		return fmt.Errorf("error unmarshaling blizzard auth response: %v", err)
 	}
 
