@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"auctioneer/app/api"
-	"auctioneer/app/api/v1"
+	v1 "auctioneer/app/api/v1"
 	"auctioneer/app/blizz"
 	"auctioneer/app/conf"
 	logging "auctioneer/app/logger"
@@ -28,7 +28,7 @@ type Auctioneer struct {
 	BaseHandler api.Handler
 }
 
-func NewApp(logger *logging.Logger, cfg *conf.Config) *Auctioneer {
+func NewApp(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 	app := new(Auctioneer)
 	app.Fib = fiber.New(fiber.Config{
 		ErrorHandler:          app.errorHandler,
@@ -36,28 +36,27 @@ func NewApp(logger *logging.Logger, cfg *conf.Config) *Auctioneer {
 		ReadTimeout:           readTimeOut,
 	})
 	app.Fib.Use(fiberLogger.New())
-	app.log = logger
-	app.cfg = cfg
 
-	return app
-}
-
-func Setup(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 	logger, err := logging.NewLogger(cfg.LogLvl)
 	if err != nil {
 		return nil, fmt.Errorf("ERROR SETTING UP API'S LOGGER: %v", err)
 	}
 
-	auctioneer := NewApp(logger, cfg)
-	auctioneer.ctx = ctx
-	blizzClient := blizz.NewClient(logger, &cfg.BlizzApiCfg)
+	app.log = logger
+
+	app.ctx = ctx
+	app.cfg = cfg
+
+	return app, nil
+}
+
+func (a *Auctioneer) Setup() {
+	blizzClient := blizz.NewClient(a.log, &a.cfg.BlizzApiCfg)
 	go blizzClient.BlizzAuthRoutine() // Сервис переавторизовывается в апи близзарда раз в 24 часа.
 
-	auctioneer.BaseHandler = api.NewBasehandler(blizzClient)
+	a.BaseHandler = api.NewBasehandler(blizzClient)
 
-	router.SetupRoutes(auctioneer.Fib, auctioneer.BaseHandler)
-
-	return auctioneer, nil
+	router.SetupRoutes(a.Fib, a.BaseHandler)
 }
 
 func (a *Auctioneer) MakeBlizzAuth() error {
