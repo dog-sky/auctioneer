@@ -1,6 +1,7 @@
 package v1_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -11,16 +12,17 @@ import (
 	server "auctioneer/app/auctioneer"
 	"auctioneer/app/blizz"
 	"auctioneer/app/conf"
-	logging "auctioneer/app/logger"
 	"auctioneer/app/router"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_SearchItemMedia(t *testing.T) {
-	cfg, _ := conf.NewConfig()
-	logger, _ := logging.NewLogger("DEBUG")
-	app := server.NewApp(logger, cfg)
+	cfg := new(conf.Config)
+	cfg.LogLvl = "INFO"
+	ctx := context.Background()
+	app, err := server.NewApp(ctx, cfg)
+	assert.NoError(t, err)
 	app.BaseHandler = &mockHandler{
 		v1:     newV1handler(),
 		system: newSystemHandler(),

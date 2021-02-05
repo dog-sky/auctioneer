@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"auctioneer/app/conf"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,6 +14,7 @@ func TestSetup(t *testing.T) {
 	cfg.LogLvl = "INFO"
 	ctx := context.Background()
 
-	_, err := Setup(ctx, cfg)
+	app, err := NewApp(ctx, cfg)
 	assert.NoError(t, err)
+	app.Setup()
 }

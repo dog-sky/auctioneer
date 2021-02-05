@@ -1,14 +1,16 @@
 package main
 
 import (
-	server "auctioneer/app/auctioneer"
-	"auctioneer/app/conf"
 	"context"
-	_ "github.com/joho/godotenv/autoload"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+
+	server "auctioneer/app/auctioneer"
+	"auctioneer/app/conf"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 func main() {
@@ -21,10 +23,11 @@ func main() {
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 	ctx, cancel := context.WithCancel(context.Background())
 
-	app, err := server.Setup(ctx, cfg)
+	app, err := server.NewApp(ctx, cfg)
 	if err != nil {
 		log.Fatalf("Error setting up server: %v", err)
 	}
+	app.Setup()
 
 	if err = app.MakeBlizzAuth(); err != nil {
 		log.Fatal(err)
