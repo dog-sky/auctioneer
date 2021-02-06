@@ -264,10 +264,9 @@ func (c *client) GetRealmID(RealmName string) int {
 func (c *client) getAuctionData(realmID int, region string) []*AuctionsDetail {
 	data := c.cache.GetAuctionData(realmID, region)
 
-	switch t := data.(type) {
-	case *AuctionData:
+	if t, ok := data.(*AuctionData); ok {
 		return t.Auctions
-	default:
-		return nil
 	}
+
+	return nil
 }
