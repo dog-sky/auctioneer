@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"auctioneer/app/api"
-	v1 "auctioneer/app/api/v1"
 	"auctioneer/app/blizz"
 	"auctioneer/app/conf"
 	logging "auctioneer/app/logger"
+	"auctioneer/app/middleware"
 	"auctioneer/app/router"
 
 	"github.com/gofiber/fiber/v2"
@@ -31,7 +31,7 @@ type Auctioneer struct {
 func NewApp(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 	app := new(Auctioneer)
 	app.Fib = fiber.New(fiber.Config{
-		ErrorHandler:          app.errorHandler,
+		ErrorHandler:          middleware.ErrorHandler,
 		DisableStartupMessage: true,
 		ReadTimeout:           readTimeOut,
 	})
@@ -80,21 +80,4 @@ func (a *Auctioneer) Serve() {
 	if err := a.Fib.Shutdown(); err != nil {
 		a.log.Fatalf("server Shutdown Failed:%+s", err)
 	}
-}
-
-func (a *Auctioneer) errorHandler(c *fiber.Ctx, incomingError error) error {
-	code := fiber.StatusInternalServerError
-	resp := v1.ResponseV1{
-		Success: false,
-	}
-
-	if e, ok := incomingError.(*fiber.Error); ok {
-		code = e.Code
-		resp.Message = e.Message
-	} else {
-		resp.Message = incomingError.Error()
-	}
-
-	a.log.Error(resp.Message)
-	return c.Status(code).JSON(resp)
 }
