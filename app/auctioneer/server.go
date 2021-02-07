@@ -43,7 +43,6 @@ func NewApp(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 	}
 
 	app.log = logger
-
 	app.ctx = ctx
 	app.cfg = cfg
 
