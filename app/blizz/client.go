@@ -4,7 +4,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net/http"
-	"net/url"
 	"strings"
 	"time"
 
@@ -73,7 +72,7 @@ func (c *client) makeGetRequest(requestURL string, ro *grequests.RequestOptions)
 }
 
 func (c *client) SearchItem(itemName string, region string) (*ItemResult, error) {
-	requestURL, _ := url.Parse(c.urls[region] + "/data/wow/search/item")
+	requestURL := c.urls[region] + "/data/wow/search/item"
 
 	var locale string
 	if isRussian(itemName) {
@@ -95,7 +94,7 @@ func (c *client) SearchItem(itemName string, region string) (*ItemResult, error)
 		},
 	}
 
-	response, err := c.makeGetRequest(requestURL.String(), ro)
+	response, err := c.makeGetRequest(requestURL, ro)
 	if err != nil {
 		return nil, fmt.Errorf("err making SEARCH ITEM request: %v", err)
 	}
@@ -121,7 +120,7 @@ func (c *client) GetBlizzRealms() error {
 }
 
 func (c *client) getBlizzRealms(region string) error {
-	requestURL, _ := url.Parse(c.urls[region] + "/data/wow/realm/index")
+	requestURL := c.urls[region] + "/data/wow/realm/index"
 
 	ro := &grequests.RequestOptions{
 		Params: map[string]string{
@@ -131,7 +130,7 @@ func (c *client) getBlizzRealms(region string) error {
 		},
 	}
 
-	response, err := c.makeGetRequest(requestURL.String(), ro)
+	response, err := c.makeGetRequest(requestURL, ro)
 	if err != nil {
 		return fmt.Errorf("err making GET REALM request: %v", err)
 	}
@@ -159,14 +158,14 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 		return data, nil
 	}
 
-	requestURL, _ := url.Parse(c.urls[region] + fmt.Sprintf("/data/wow/connected-realm/%d/auctions", realmID))
+	requestURL := c.urls[region] + fmt.Sprintf("/data/wow/connected-realm/%d/auctions", realmID)
 	ro := &grequests.RequestOptions{
 		Params: map[string]string{
 			"namespace":    fmt.Sprintf("dynamic-%s", region),
 			"access_token": c.token.AccessToken,
 		},
 	}
-	response, err := c.makeGetRequest(requestURL.String(), ro)
+	response, err := c.makeGetRequest(requestURL, ro)
 	if err != nil {
 		return nil, fmt.Errorf("err making AUCTION DATA request: %v", err)
 	}
@@ -191,14 +190,14 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 }
 
 func (c *client) GetItemMedia(itemID string) (*ItemMedia, error) {
-	requestURL, _ := url.Parse(c.urls["eu"] + fmt.Sprintf("/data/wow/media/item/%s", itemID))
+	requestURL := c.urls["eu"] + fmt.Sprintf("/data/wow/media/item/%s", itemID)
 	ro := &grequests.RequestOptions{
 		Params: map[string]string{
 			"namespace":    "static-eu",
 			"access_token": c.token.AccessToken,
 		},
 	}
-	response, err := c.makeGetRequest(requestURL.String(), ro)
+	response, err := c.makeGetRequest(requestURL, ro)
 	if err != nil {
 		return nil, fmt.Errorf("err making ITEM MEDIA request: %v", err)
 	}
