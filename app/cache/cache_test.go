@@ -91,13 +91,13 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				region:  "eu",
 				auctionData: &blizz.AuctionData{
 					Auctions: []*blizz.AuctionsDetail{
-						&blizz.AuctionsDetail{
+						{
 							ID: 1,
 							Item: blizz.AcuItem{
 								ID:      2,
 								Context: 1,
 								Modifiers: []blizz.AucItemModifiers{
-									blizz.AucItemModifiers{
+									{
 										Type:  1,
 										Value: 1,
 									},
@@ -132,13 +132,13 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				region:  "eu",
 				auctionData: &blizz.AuctionData{
 					Auctions: []*blizz.AuctionsDetail{
-						&blizz.AuctionsDetail{
+						{
 							ID: 1,
 							Item: blizz.AcuItem{
 								ID:      2,
 								Context: 1,
 								Modifiers: []blizz.AucItemModifiers{
-									blizz.AucItemModifiers{
+									{
 										Type:  1,
 										Value: 1,
 									},
@@ -173,13 +173,13 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				region:  "eu",
 				auctionData: &blizz.AuctionData{
 					Auctions: []*blizz.AuctionsDetail{
-						&blizz.AuctionsDetail{
+						{
 							ID: 1,
 							Item: blizz.AcuItem{
 								ID:      2,
 								Context: 1,
 								Modifiers: []blizz.AucItemModifiers{
-									blizz.AucItemModifiers{
+									{
 										Type:  1,
 										Value: 1,
 									},
@@ -214,13 +214,13 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				region:  "eu",
 				auctionData: &blizz.AuctionData{
 					Auctions: []*blizz.AuctionsDetail{
-						&blizz.AuctionsDetail{
+						{
 							ID: 2,
 							Item: blizz.AcuItem{
 								ID:      3,
 								Context: 1,
 								Modifiers: []blizz.AucItemModifiers{
-									blizz.AucItemModifiers{
+									{
 										Type:  1,
 										Value: 1,
 									},
@@ -255,13 +255,13 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				region:  "eu",
 				auctionData: &blizz.AuctionData{
 					Auctions: []*blizz.AuctionsDetail{
-						&blizz.AuctionsDetail{
+						{
 							ID: 2,
 							Item: blizz.AcuItem{
 								ID:      3,
 								Context: 1,
 								Modifiers: []blizz.AucItemModifiers{
-									blizz.AucItemModifiers{
+									{
 										Type:  1,
 										Value: 1,
 									},
@@ -296,13 +296,13 @@ func Test_cache_SetAuctionData(t *testing.T) {
 				region:  "eu",
 				auctionData: &blizz.AuctionData{
 					Auctions: []*blizz.AuctionsDetail{
-						&blizz.AuctionsDetail{
+						{
 							ID: 2,
 							Item: blizz.AcuItem{
 								ID:      3,
 								Context: 1,
 								Modifiers: []blizz.AucItemModifiers{
-									blizz.AucItemModifiers{
+									{
 										Type:  1,
 										Value: 1,
 									},
