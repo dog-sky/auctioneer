@@ -3,7 +3,7 @@ package router
 import (
 	"auctioneer/app/api"
 	"auctioneer/app/api/system"
-	"auctioneer/app/api/v1"
+	v1 "auctioneer/app/api/v1"
 
 	"github.com/gofiber/fiber/v2"
 )
