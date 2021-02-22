@@ -153,8 +153,7 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 	// last-modified: Thu, 31 Dec 2020 15:08:43 GMT
 	// нужно сохранить данные локально для реалма и отдавать их из кеша в течение часа
 
-	data := c.getAuctionData(realmID, region)
-	if data != nil {
+	if data := c.getAuctionData(realmID, region); data != nil {
 		return data, nil
 	}
 

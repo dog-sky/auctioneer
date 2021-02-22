@@ -2,6 +2,7 @@ package v1
 
 import (
 	"auctioneer/app/blizz"
+
 	"github.com/gofiber/fiber/v2"
 )
 
