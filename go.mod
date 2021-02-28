@@ -3,8 +3,9 @@ module auctioneer
 go 1.15
 
 require (
-	github.com/gofiber/fiber/v2 v2.3.2
+	github.com/gofiber/fiber/v2 v2.5.0
 	github.com/joho/godotenv v1.3.0
+	github.com/karlseguin/ccache/v2 v2.0.8 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a
 	github.com/myesui/uuid v1.0.0 // indirect

@@ -69,7 +69,8 @@ func Test_cache_getSetRealm(t *testing.T) {
 func Test_cache_SetAuctionData(t *testing.T) {
 	c := cache.NewCache()
 	now := time.Now()
-	past := time.Now().Add(-1 * time.Hour)
+	pastHour := time.Now().Add(-1 * time.Hour)
+	pastMinutes := time.Now().Add(-20 * time.Minute)
 
 	type args struct {
 		realmID     int
@@ -242,14 +243,14 @@ func Test_cache_SetAuctionData(t *testing.T) {
 						},
 					},
 				},
-				updatedAt: &past,
+				updatedAt: &pastMinutes,
 			},
 			getRealmID: 504,
 			getRegion:  "eu",
-			exp:        nil,
+			exp:        &blizz.AuctionData{},
 		},
 		{
-			name: "OK past",
+			name: "OK past hour",
 			args: args{
 				realmID: 504,
 				region:  "eu",
@@ -283,7 +284,7 @@ func Test_cache_SetAuctionData(t *testing.T) {
 						},
 					},
 				},
-				updatedAt: &past,
+				updatedAt: &pastHour,
 			},
 			getRealmID: 2,
 			getRegion:  "eu",
