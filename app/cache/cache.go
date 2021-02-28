@@ -5,6 +5,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/karlseguin/ccache/v2"
 )
 
 type Cache interface {
@@ -14,21 +16,16 @@ type Cache interface {
 	SetAuctionData(realmID int, region string, auctionData interface{}, updatedAt *time.Time)
 }
 
-type aucDataWithTTL struct {
-	ttl  *time.Time
-	data interface{}
-}
-
 type cache struct {
-	mux         sync.RWMutex
-	realmList   map[string]int
-	auctionData map[string]*aucDataWithTTL
+	mux       sync.RWMutex
+	realmList map[string]int
+	cache     *ccache.Cache
 }
 
 func NewCache() Cache {
 	return &cache{
-		realmList:   make(map[string]int),
-		auctionData: make(map[string]*aucDataWithTTL),
+		realmList: make(map[string]int),
+		cache:     ccache.New(ccache.Configure().MaxSize(1000).ItemsToPrune(100)),
 	}
 }
 
@@ -57,25 +54,13 @@ func (c *cache) SetRealmID(RealmName string, RealmID int) {
 }
 
 func (c *cache) GetAuctionData(realmID int, region string) interface{} {
-	if realmID == 0 {
+	if realmID == 0 || region == "" {
 		return nil
 	}
-	if region == "" {
-		return nil
-	}
+
 	key := fmt.Sprintf("%d_%s", realmID, region)
-
-	c.mux.RLock()
-	defer c.mux.RUnlock()
-
-	data, ok := c.auctionData[key]
-	if !ok {
-		return nil
-	}
-
-	now := time.Now().In(data.ttl.Location())
-	if data.ttl.After(now) {
-		return data.data
+	if item := c.cache.Get(key); item != nil {
+		return item.Value()
 	}
 
 	return nil
@@ -83,13 +68,7 @@ func (c *cache) GetAuctionData(realmID int, region string) interface{} {
 
 func (c *cache) SetAuctionData(realmID int, region string, auctionData interface{}, updatedAt *time.Time) {
 	key := fmt.Sprintf("%d_%s", realmID, region)
-	ttl := updatedAt.Add(time.Hour) // Кеш действителен час
-	data := aucDataWithTTL{
-		ttl:  &ttl,
-		data: auctionData,
-	}
+	ttl := time.Until(updatedAt.Add(time.Hour))
 
-	c.mux.Lock()
-	c.auctionData[key] = &data
-	c.mux.Unlock()
+	c.cache.Set(key, auctionData, ttl)
 }
