@@ -7,6 +7,47 @@ import (
 	"github.com/levigross/grequests"
 )
 
+type ItemAssets struct {
+	Key        string `json:"key"`
+	Value      string `json:"value"`
+	FileDataID int    `json:"file_data_id"`
+}
+
+type ItemMedia struct {
+	Assets []ItemAssets `json:"assets"`
+	ID     int          `json:"id"`
+}
+
+type AucItemModifiers struct {
+	Type  int `json:"type"`
+	Value int `json:"value"`
+}
+
+type AcuItem struct {
+	ID           int                `json:"id"`
+	Context      int                `json:"context"`
+	Modifiers    []AucItemModifiers `json:"modifiers"`
+	PetBreedID   int                `json:"pet_breed_id"`
+	PetLevel     int                `json:"pet_level"`
+	PetQualityID int                `json:"pet_quality_id"`
+	PetSpeciesID int                `json:"pet_species_id"`
+}
+
+type AuctionsDetail struct {
+	ID       int          `json:"id"`
+	Item     AcuItem      `json:"item"`
+	Buyout   int          `json:"buyout"`
+	Quantity int          `json:"quantity"`
+	TimeLeft string       `json:"time_left"`
+	ItemName ItemResultResultsDataName `json:"item_name"`
+	Quality  string       `json:"quality"`
+	Price    int          `json:"unit_price"`
+}
+
+type AuctionData struct {
+	Auctions []*AuctionsDetail `json:"auctions"`
+}
+
 func (c *client) getCachedAuctionData(realmID int, region string) []*AuctionsDetail {
 	data := c.cache.GetAuctionData(realmID, region)
 

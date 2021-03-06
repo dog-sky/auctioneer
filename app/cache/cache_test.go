@@ -111,7 +111,7 @@ func Test_cache_SetAuctionData(t *testing.T) {
 							Buyout:   10001,
 							Quantity: 2,
 							TimeLeft: "233",
-							ItemName: blizz.DetailedName{
+							ItemName: blizz.ItemResultResultsDataName{
 								RuRU: "Боевой топор авангарда Гарроша",
 								EnGB: "Garrosh's Vanguard Battleaxe",
 								EnUS: "Garrosh's Vanguard Battleaxe",
@@ -152,7 +152,7 @@ func Test_cache_SetAuctionData(t *testing.T) {
 							Buyout:   10001,
 							Quantity: 2,
 							TimeLeft: "233",
-							ItemName: blizz.DetailedName{
+							ItemName: blizz.ItemResultResultsDataName{
 								RuRU: "Боевой топор авангарда Гарроша",
 								EnGB: "Garrosh's Vanguard Battleaxe",
 								EnUS: "Garrosh's Vanguard Battleaxe",
@@ -193,7 +193,7 @@ func Test_cache_SetAuctionData(t *testing.T) {
 							Buyout:   10001,
 							Quantity: 2,
 							TimeLeft: "233",
-							ItemName: blizz.DetailedName{
+							ItemName: blizz.ItemResultResultsDataName{
 								RuRU: "Боевой топор авангарда Гарроша",
 								EnGB: "Garrosh's Vanguard Battleaxe",
 								EnUS: "Garrosh's Vanguard Battleaxe",
@@ -234,7 +234,7 @@ func Test_cache_SetAuctionData(t *testing.T) {
 							Buyout:   10001,
 							Quantity: 2,
 							TimeLeft: "233",
-							ItemName: blizz.DetailedName{
+							ItemName: blizz.ItemResultResultsDataName{
 								RuRU: "Боевой топор авангарда Гарроша",
 								EnGB: "Garrosh's Vanguard Battleaxe",
 								EnUS: "Garrosh's Vanguard Battleaxe",
@@ -275,7 +275,7 @@ func Test_cache_SetAuctionData(t *testing.T) {
 							Buyout:   10001,
 							Quantity: 2,
 							TimeLeft: "233",
-							ItemName: blizz.DetailedName{
+							ItemName: blizz.ItemResultResultsDataName{
 								RuRU: "Боевой топор авангарда Гарроша",
 								EnGB: "Garrosh's Vanguard Battleaxe",
 								EnUS: "Garrosh's Vanguard Battleaxe",
@@ -316,7 +316,7 @@ func Test_cache_SetAuctionData(t *testing.T) {
 							Buyout:   10001,
 							Quantity: 2,
 							TimeLeft: "233",
-							ItemName: blizz.DetailedName{
+							ItemName: blizz.ItemResultResultsDataName{
 								RuRU: "Боевой топор авангарда Гарроша",
 								EnGB: "Garrosh's Vanguard Battleaxe",
 								EnUS: "Garrosh's Vanguard Battleaxe",

@@ -6,7 +6,31 @@ import (
 	"github.com/levigross/grequests"
 )
 
-func (c *client) SearchItem(itemName string, region string) (*ItemResult, error) {
+type ItemResultResultsDataName struct {
+	RuRU string `json:"ru_RU"`
+	EnGB string `json:"en_GB"`
+	EnUS string `json:"en_US"`
+}
+
+type ItemResultResultsDataQuality struct {
+	Type string `json:"type"`
+}
+
+type ItemResultResultsData struct {
+	Name    ItemResultResultsDataName `json:"name"`
+	ID      int          `json:"id"`
+	Quality ItemResultResultsDataQuality  `json:"quality"`
+}
+
+type ItemResultResults struct {
+	Data ItemResultResultsData `json:"data"`
+}
+
+type Item struct {
+	Results []ItemResultResults `json:"results"`
+}
+
+func (c *client) SearchItem(itemName string, region string) (*Item, error) {
 	requestURL := c.urls[region] + "/data/wow/search/item"
 
 	var locale string
@@ -34,7 +58,7 @@ func (c *client) SearchItem(itemName string, region string) (*ItemResult, error)
 		return nil, fmt.Errorf("err making SEARCH ITEM request: %v", err)
 	}
 
-	itemData := new(ItemResult)
+	itemData := new(Item)
 	if err := response.JSON(itemData); err != nil {
 		return nil, fmt.Errorf(
 			"error unmarshaling realm list response: %v", err,

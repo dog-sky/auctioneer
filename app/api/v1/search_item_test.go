@@ -61,7 +61,7 @@ func Test_SearchItemData(t *testing.T) {
 						Buyout:   10001,
 						Quantity: 2,
 						TimeLeft: "233",
-						ItemName: blizz.DetailedName{
+						ItemName: blizz.ItemResultResultsDataName{
 							RuRU: "Оправдание Гарроша",
 							EnGB: "Garrosh's Pardon",
 							EnUS: "Garrosh's Pardon",

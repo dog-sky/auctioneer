@@ -21,7 +21,7 @@ type Client interface {
 	GetRealmID(string) int
 	BlizzAuthRoutine()
 	GetItemMedia(itemID string) (*ItemMedia, error)
-	SearchItem(itemName string, region string) (*ItemResult, error)
+	SearchItem(itemName string, region string) (*Item, error)
 	GetAuctionData(realmID int, region string) ([]*AuctionsDetail, error)
 }
 

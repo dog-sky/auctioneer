@@ -101,30 +101,30 @@ func searchItemMock(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	items := &ItemResult{
-		Results: []ItemTesult{
+	items := &Item{
+		Results: []ItemResultResults{
 			{
-				Data: ItemData{
-					Name: DetailedName{
+				Data: ItemResultResultsData{
+					Name: ItemResultResultsDataName{
 						RuRU: "Оправдание Гарроша",
 						EnGB: "Garrosh's Pardon",
 						EnUS: "Garrosh's Pardon",
 					},
 					ID: 1,
-					Quality: ItemQuality{
+					Quality: ItemResultResultsDataQuality{
 						Type: "EPIC",
 					},
 				},
 			},
 			{
-				Data: ItemData{
-					Name: DetailedName{
+				Data: ItemResultResultsData{
+					Name: ItemResultResultsDataName{
 						RuRU: "Боевой топор авангарда Гарроша",
 						EnGB: "Garrosh's Vanguard Battleaxe",
 						EnUS: "Garrosh's Vanguard Battleaxe",
 					},
 					ID: 2,
-					Quality: ItemQuality{
+					Quality: ItemResultResultsDataQuality{
 						Type: "UNCOMMON",
 					},
 				},
@@ -193,7 +193,7 @@ func auctionDataMock(w http.ResponseWriter, r *http.Request) {
 					Buyout:   10001,
 					Quantity: 2,
 					TimeLeft: "233",
-					ItemName: DetailedName{
+					ItemName: ItemResultResultsDataName{
 						RuRU: "Боевой топор авангарда Гарроша",
 						EnGB: "Garrosh's Vanguard Battleaxe",
 						EnUS: "Garrosh's Vanguard Battleaxe",
@@ -237,7 +237,7 @@ func auctionDataMock(w http.ResponseWriter, r *http.Request) {
 				Buyout:   10001,
 				Quantity: 2,
 				TimeLeft: "233",
-				ItemName: DetailedName{
+				ItemName: ItemResultResultsDataName{
 					RuRU: "Боевой топор авангарда Гарроша",
 					EnGB: "Garrosh's Vanguard Battleaxe",
 					EnUS: "Garrosh's Vanguard Battleaxe",

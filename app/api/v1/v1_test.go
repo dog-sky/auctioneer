@@ -80,19 +80,19 @@ func (c *mockBlizzClient) GetRealmID(s string) int {
 	return 0
 }
 
-func (c *mockBlizzClient) SearchItem(itemName string, region string) (*blizz.ItemResult, error) {
+func (c *mockBlizzClient) SearchItem(itemName string, region string) (*blizz.Item, error) {
 	if strings.Contains(itemName, "гаррош") {
-		return &blizz.ItemResult{
-			Results: []blizz.ItemTesult{
+		return &blizz.Item{
+			Results: []blizz.ItemResultResults{
 				{
-					Data: blizz.ItemData{
-						Name: blizz.DetailedName{
+					Data: blizz.ItemResultResultsData{
+						Name: blizz.ItemResultResultsDataName{
 							RuRU: "Оправдание Гарроша",
 							EnGB: "Garrosh's Pardon",
 							EnUS: "Garrosh's Pardon",
 						},
 						ID: 1,
-						Quality: blizz.ItemQuality{
+						Quality: blizz.ItemResultResultsDataQuality{
 							Type: "EPIC",
 						},
 					},
@@ -101,17 +101,17 @@ func (c *mockBlizzClient) SearchItem(itemName string, region string) (*blizz.Ite
 		}, nil
 	}
 	if strings.Contains(itemName, "опал") {
-		return &blizz.ItemResult{
-			Results: []blizz.ItemTesult{
+		return &blizz.Item{
+			Results: []blizz.ItemResultResults{
 				{
-					Data: blizz.ItemData{
-						Name: blizz.DetailedName{
+					Data: blizz.ItemResultResultsData{
+						Name: blizz.ItemResultResultsDataName{
 							RuRU: "Большой опал",
 							EnGB: "Large Opal",
 							EnUS: "Large Opal",
 						},
 						ID: 2,
-						Quality: blizz.ItemQuality{
+						Quality: blizz.ItemResultResultsDataQuality{
 							Type: "UNCOMMON",
 						},
 					},
@@ -124,8 +124,8 @@ func (c *mockBlizzClient) SearchItem(itemName string, region string) (*blizz.Ite
 			"error making get auction request, status: %d", 404,
 		)
 	}
-	return &blizz.ItemResult{
-		Results: []blizz.ItemTesult{},
+	return &blizz.Item{
+		Results: []blizz.ItemResultResults{},
 	}, nil
 }
 
@@ -151,7 +151,7 @@ func (c *mockBlizzClient) GetAuctionData(realmID int, region string) ([]*blizz.A
 				Buyout:   10001,
 				Quantity: 2,
 				TimeLeft: "233",
-				ItemName: blizz.DetailedName{
+				ItemName: blizz.ItemResultResultsDataName{
 					RuRU: "Оправдание Гарроша",
 					EnGB: "Garrosh's Pardon",
 					EnUS: "Garrosh's Pardon",

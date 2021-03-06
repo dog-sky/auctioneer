@@ -6,6 +6,15 @@ import (
 	"github.com/levigross/grequests"
 )
 
+type realm struct {
+	Name string `json:"name"`
+	ID   int    `json:"id"`
+}
+
+type BlizzRealmsSearchResult struct {
+	Realms []realm `json:"realms"`
+}
+
 func (c *client) GetBlizzRealms() error {
 	for _, region := range c.cfg.RegionList {
 		if err := c.getBlizzRealms(region); err != nil {
