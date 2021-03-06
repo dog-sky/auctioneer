@@ -7,7 +7,7 @@ import (
 	"github.com/levigross/grequests"
 )
 
-func (c *client) getAuctionData(realmID int, region string) []*AuctionsDetail {
+func (c *client) getCachedAuctionData(realmID int, region string) []*AuctionsDetail {
 	data := c.cache.GetAuctionData(realmID, region)
 
 	if t, ok := data.(*AuctionData); ok {
@@ -22,7 +22,7 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 	// last-modified: Thu, 31 Dec 2020 15:08:43 GMT
 	// нужно сохранить данные локально для реалма и отдавать их из кеша в течение часа
 
-	if data := c.getAuctionData(realmID, region); data != nil {
+	if data := c.getCachedAuctionData(realmID, region); data != nil {
 		return data, nil
 	}
 
