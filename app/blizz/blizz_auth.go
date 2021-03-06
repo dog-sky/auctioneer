@@ -8,6 +8,12 @@ import (
 	"github.com/levigross/grequests"
 )
 
+type BlizzardToken struct {
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+	ExpiresIn   int    `json:"expires_in"`
+}
+
 func (c *client) BlizzAuthRoutine() {
 	delay := 6 * time.Hour
 	t := time.NewTicker(delay)
