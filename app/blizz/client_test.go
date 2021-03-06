@@ -6,12 +6,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
-	"testing"
 
 	"auctioneer/app/conf"
 	logging "auctioneer/app/logger"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/twinj/uuid"
 )
 
@@ -28,7 +26,7 @@ func serverMock() *httptest.Server {
 	return srv
 }
 
-func makeBlizzClient() Client {
+func makeTestBlizzClient() Client {
 	srv := serverMock()
 	cfg := conf.Config{
 		BlizzApiCfg: conf.BlizzApiCfg{
@@ -42,136 +40,6 @@ func makeBlizzClient() Client {
 
 	log, _ := logging.NewLogger("ERROR")
 	return NewClient(log, &cfg.BlizzApiCfg)
-}
-
-func TestClient_auth(t *testing.T) {
-	blizzClient := makeBlizzClient()
-	err := blizzClient.MakeBlizzAuth()
-	assert.NoError(t, err)
-}
-
-func TestClient_getRealms(t *testing.T) {
-	blizzClient := makeBlizzClient()
-	_ = blizzClient.MakeBlizzAuth()
-	c := blizzClient.(*client)
-	c.cfg.RegionList = append(c.cfg.RegionList, "gb")
-
-	err := c.GetBlizzRealms()
-	assert.Error(t, err)
-
-	// второй раз для получения из кэша
-	err = c.GetBlizzRealms()
-	assert.Error(t, err)
-}
-
-func TestClient_getRealmsErr(t *testing.T) {
-	srv := serverMock()
-	blizzCfg := conf.BlizzApiCfg{
-		EuAPIUrl:     srv.URL,
-		UsAPIUrl:     srv.URL,
-		AUTHUrl:      srv.URL + "/oauth/token",
-		ClientSecret: "secret",
-		RegionList:   []string{"gb"},
-	}
-	cfgErr := &conf.Config{
-		BlizzApiCfg: blizzCfg,
-	}
-
-	log, _ := logging.NewLogger("ERROR")
-	errClient := NewClient(log, &cfgErr.BlizzApiCfg)
-	_ = errClient.MakeBlizzAuth()
-
-	err := errClient.GetBlizzRealms()
-	assert.Error(t, err)
-}
-
-func TestClient_searchItem(t *testing.T) {
-	blizzClient := makeBlizzClient()
-	_ = blizzClient.MakeBlizzAuth()
-
-	res, err := blizzClient.SearchItem("Гаррош", "eu")
-	assert.NoError(t, err)
-	assert.NotNil(t, res)
-
-	res, err = blizzClient.SearchItem("Garrosh", "eu")
-	assert.NoError(t, err)
-	assert.NotNil(t, res)
-
-	res, err = blizzClient.SearchItem("Garrosh", "us")
-	assert.Error(t, err)
-	assert.Nil(t, res)
-}
-
-func TestClient_searchItemErrJson(t *testing.T) {
-	errClient := makeBlizzClient()
-	_ = errClient.MakeBlizzAuth()
-
-	res, err := errClient.SearchItem("error_item_search", "eu")
-	assert.Error(t, err)
-	assert.Nil(t, res)
-
-	res, err = errClient.SearchItem("error_item_search", "gr")
-	assert.Error(t, err)
-	assert.Nil(t, res)
-}
-
-func TestClient_searchItemMedia(t *testing.T) {
-	blizzClient := makeBlizzClient()
-	_ = blizzClient.MakeBlizzAuth()
-
-	res, err := blizzClient.GetItemMedia("500")
-	assert.NoError(t, err)
-	assert.NotNil(t, res)
-
-	res, err = blizzClient.GetItemMedia("504")
-	assert.Error(t, err)
-	assert.Nil(t, res)
-
-	res, err = blizzClient.GetItemMedia("502")
-	assert.Error(t, err)
-	assert.Nil(t, res)
-}
-
-func TestClient_getAuctionData(t *testing.T) {
-	blizzClient := makeBlizzClient()
-	_ = blizzClient.MakeBlizzAuth()
-
-	res, err := blizzClient.GetAuctionData(501, "eu")
-	assert.NoError(t, err)
-	assert.NotNil(t, res)
-
-	// Второй раз для получения данных из кэша и првоерка на ошибку.
-	res, err = blizzClient.GetAuctionData(501, "eu")
-	assert.NoError(t, err)
-	assert.NotNil(t, res)
-}
-
-func TestClient_getAuctionDataError(t *testing.T) {
-	errClient := makeBlizzClient()
-	_ = errClient.MakeBlizzAuth()
-
-	tests := []struct {
-		name   string
-		server int
-	}{
-		{
-			name:   "Server status Err",
-			server: 502,
-		}, {
-			name:   "Time Decode Err",
-			server: 503,
-		}, {
-			name:   "JSON Decode Err",
-			server: 504,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			res, err := errClient.GetAuctionData(tt.server, "eu")
-			assert.Error(t, err)
-			assert.Nil(t, res)
-		})
-	}
 }
 
 func authMock(w http.ResponseWriter, r *http.Request) {
