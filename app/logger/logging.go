@@ -4,20 +4,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type Logger struct {
-	*logrus.Logger
-}
-
-func NewLogger(logLvl string) (*Logger, error) {
+func NewLogger(logLvl string) (*logrus.Logger, error) {
 	lvl, err := logrus.ParseLevel(logLvl)
 	if err != nil {
 		return nil, err
 	}
 
-	baseLogger := logrus.New()
-	logger := &Logger{baseLogger}
+	logger := logrus.New()
 	logger.SetLevel(lvl)
-	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetFormatter(&logrus.JSONFormatter{PrettyPrint: true})
 
 	return logger, nil
 }

@@ -14,6 +14,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	fiberLogger "github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -22,7 +23,7 @@ const (
 
 type Auctioneer struct {
 	Fib         *fiber.App
-	log         *logging.Logger
+	log         *logrus.Logger
 	cfg         *conf.Config
 	ctx         context.Context
 	BaseHandler api.Handler

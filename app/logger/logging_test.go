@@ -3,6 +3,7 @@ package logging
 import (
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,7 +14,7 @@ func TestNewLogger(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    *Logger
+		want    *logrus.Logger
 		wantErr bool
 	}{
 		{
@@ -21,7 +22,7 @@ func TestNewLogger(t *testing.T) {
 			args: args{
 				"INFO",
 			},
-			want:    &Logger{},
+			want:    &logrus.Logger{},
 			wantErr: false,
 		},
 		{
@@ -29,7 +30,7 @@ func TestNewLogger(t *testing.T) {
 			args: args{
 				"DEBUG",
 			},
-			want:    &Logger{},
+			want:    &logrus.Logger{},
 			wantErr: false,
 		},
 		{
@@ -37,7 +38,7 @@ func TestNewLogger(t *testing.T) {
 			args: args{
 				"ERROR",
 			},
-			want:    &Logger{},
+			want:    &logrus.Logger{},
 			wantErr: false,
 		},
 		{
@@ -45,7 +46,7 @@ func TestNewLogger(t *testing.T) {
 			args: args{
 				"NOT VALUE",
 			},
-			want:    &Logger{},
+			want:    &logrus.Logger{},
 			wantErr: true,
 		},
 	}

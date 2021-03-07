@@ -8,9 +8,9 @@ import (
 
 	"auctioneer/app/cache"
 	"auctioneer/app/conf"
-	logging "auctioneer/app/logger"
 
 	"github.com/levigross/grequests"
+	"github.com/sirupsen/logrus"
 )
 
 const layoutUS = "Mon, 2 Jan 2006 15:04:05 MST"
@@ -31,10 +31,10 @@ type client struct {
 	cfg     *conf.BlizzApiCfg
 	session *grequests.Session
 	urls    map[string]string
-	log     *logging.Logger
+	log     *logrus.Logger
 }
 
-func NewClient(logger *logging.Logger, blizzCfg *conf.BlizzApiCfg) Client {
+func NewClient(logger *logrus.Logger, blizzCfg *conf.BlizzApiCfg) Client {
 	urlsMap := make(map[string]string)
 	urlsMap["eu"] = blizzCfg.EuAPIUrl
 	urlsMap["us"] = blizzCfg.UsAPIUrl
