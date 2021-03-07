@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
 func TestClient_searchItemErrJson(t *testing.T) {
 	errClient := makeTestBlizzClient()
 	_ = errClient.MakeBlizzAuth()
@@ -19,7 +18,6 @@ func TestClient_searchItemErrJson(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, res)
 }
-
 
 func TestClient_searchItem(t *testing.T) {
 	blizzClient := makeTestBlizzClient()

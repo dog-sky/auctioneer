@@ -17,9 +17,9 @@ type ItemResultResultsDataQuality struct {
 }
 
 type ItemResultResultsData struct {
-	Name    ItemResultResultsDataName `json:"name"`
-	ID      int          `json:"id"`
-	Quality ItemResultResultsDataQuality  `json:"quality"`
+	Name    ItemResultResultsDataName    `json:"name"`
+	ID      int                          `json:"id"`
+	Quality ItemResultResultsDataQuality `json:"quality"`
 }
 
 type ItemResultResults struct {

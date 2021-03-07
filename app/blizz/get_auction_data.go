@@ -34,14 +34,14 @@ type AcuItem struct {
 }
 
 type AuctionsDetail struct {
-	ID       int          `json:"id"`
-	Item     AcuItem      `json:"item"`
-	Buyout   int          `json:"buyout"`
-	Quantity int          `json:"quantity"`
-	TimeLeft string       `json:"time_left"`
+	ID       int                       `json:"id"`
+	Item     AcuItem                   `json:"item"`
+	Buyout   int                       `json:"buyout"`
+	Quantity int                       `json:"quantity"`
+	TimeLeft string                    `json:"time_left"`
 	ItemName ItemResultResultsDataName `json:"item_name"`
-	Quality  string       `json:"quality"`
-	Price    int          `json:"unit_price"`
+	Quality  string                    `json:"quality"`
+	Price    int                       `json:"unit_price"`
 }
 
 type AuctionData struct {

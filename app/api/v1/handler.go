@@ -15,7 +15,7 @@ type Handler interface {
 
 type V1Handler struct {
 	blizzClient blizz.Client
-	// log      *logging.Logger
+	// log      *logrus.Logger
 }
 
 func NewBasehandlerv1(blizzClient blizz.Client) Handler {
