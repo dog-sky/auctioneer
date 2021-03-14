@@ -16,7 +16,7 @@ import (
 func serverMock() *httptest.Server {
 	handler := http.NewServeMux()
 	handler.HandleFunc("/oauth/token", authMock)
-	handler.HandleFunc("/data/wow/realm/index", realmListMock)
+	handler.HandleFunc("/data/wow/search/connected-realm", realmListMock)
 	handler.HandleFunc("/data/wow/search/item", searchItemMock)
 	handler.HandleFunc("/data/wow/connected-realm/", auctionDataMock)
 	handler.HandleFunc("/data/wow/media/item/", itemMediaMock)
