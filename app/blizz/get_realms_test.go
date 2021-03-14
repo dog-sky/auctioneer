@@ -12,14 +12,13 @@ func TestClient_getRealms(t *testing.T) {
 	blizzClient := makeTestBlizzClient()
 	_ = blizzClient.MakeBlizzAuth()
 	c := blizzClient.(*client)
-	c.cfg.RegionList = append(c.cfg.RegionList, "gb")
 
 	err := c.GetBlizzRealms()
-	assert.Error(t, err)
+	assert.NoError(t, err)
 
 	// второй раз для получения из кэша
 	err = c.GetBlizzRealms()
-	assert.Error(t, err)
+	assert.NoError(t, err)
 }
 
 func TestClient_getRealmsErr(t *testing.T) {
