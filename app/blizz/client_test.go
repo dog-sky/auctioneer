@@ -61,26 +61,71 @@ func realmListMock(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rlms := BlizzRealmsSearchResult{
-		Realms: []realm{
+		Results: []BlizzRealmsSearchResultResults{
 			{
-				ID:   501,
-				Name: "Arathor",
+				Data: BlizzRealmsSearchResultResultsData{
+					ID: 501,
+					Realms: []BlizzRealmsSearchResultResultsDataRealms{
+						{
+							Name: BlizzRealmsSearchResultResultsDataRealmsName{
+								RuRU: "Arathor",
+								EnGB: "Arathor",
+							},
+						},
+					},
+				},
 			},
 			{
-				ID:   500,
-				Name: "Aggramar",
+				Data: BlizzRealmsSearchResultResultsData{
+					ID: 500,
+					Realms: []BlizzRealmsSearchResultResultsDataRealms{
+						{
+							Name: BlizzRealmsSearchResultResultsDataRealmsName{
+								RuRU: "Aggramar",
+								EnGB: "Aggramar",
+							},
+						},
+					},
+				},
 			},
 			{
-				ID:   503,
-				Name: "WhronJson",
+				Data: BlizzRealmsSearchResultResultsData{
+					ID: 503,
+					Realms: []BlizzRealmsSearchResultResultsDataRealms{
+						{
+							Name: BlizzRealmsSearchResultResultsDataRealmsName{
+								RuRU: "WhronJson",
+								EnGB: "WhronJson",
+							},
+						},
+					},
+				},
 			},
 			{
-				ID:   504,
-				Name: "TimeDecodeErr",
+				Data: BlizzRealmsSearchResultResultsData{
+					ID: 504,
+					Realms: []BlizzRealmsSearchResultResultsDataRealms{
+						{
+							Name: BlizzRealmsSearchResultResultsDataRealmsName{
+								RuRU: "TimeDecodeErr",
+								EnGB: "TimeDecodeErr",
+							},
+						},
+					},
+				},
 			},
 			{
-				ID:   502,
-				Name: "ServerStatus",
+				Data: BlizzRealmsSearchResultResultsData{
+					ID: 502,
+					Realms: []BlizzRealmsSearchResultResultsDataRealms{
+						{
+							Name: BlizzRealmsSearchResultResultsDataRealmsName{
+								RuRU: "ServerStatus",
+								EnGB: "ServerStatus",
+							},
+						},
+					},
+				},
 			},
 		},
 	}
