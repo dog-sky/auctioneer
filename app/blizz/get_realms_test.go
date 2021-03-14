@@ -19,6 +19,9 @@ func TestClient_getRealms(t *testing.T) {
 	// второй раз для получения из кэша
 	err = c.GetBlizzRealms()
 	assert.NoError(t, err)
+
+	realmID := c.GetRealmID("Arathor")
+	assert.Equal(t, 501, realmID)
 }
 
 func TestClient_getRealmsErr(t *testing.T) {
