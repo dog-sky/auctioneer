@@ -6,13 +6,27 @@ import (
 	"github.com/levigross/grequests"
 )
 
-type realm struct {
-	Name string `json:"name"`
-	ID   int    `json:"id"`
+type BlizzRealmsSearchResultResultsDataRealmsName struct {
+	RuRU string `json:"ru_RU"`
+	EnGB string `json:"en_GB"`
 }
 
+type BlizzRealmsSearchResultResultsDataRealms struct {
+	Name BlizzRealmsSearchResultResultsDataRealmsName `json:"name"`
+}
+
+type BlizzRealmsSearchResultResultsData struct {
+	Realms []BlizzRealmsSearchResultResultsDataRealms `json:"realms"`
+	ID     int                                        `json:"id"`
+}
+
+type BlizzRealmsSearchResultResults struct {
+	Data BlizzRealmsSearchResultResultsData `json:"data"`
+}
+
+// Итоговая структура. Из этого нужно брать имя сервера и значением будет айди коннектед риалма
 type BlizzRealmsSearchResult struct {
-	Realms []realm `json:"realms"`
+	Results []BlizzRealmsSearchResultResults `json:"results"`
 }
 
 func (c *client) GetBlizzRealms() error {
@@ -30,13 +44,16 @@ func (c *client) GetRealmID(RealmName string) int {
 }
 
 func (c *client) setRealms(realms *BlizzRealmsSearchResult) {
-	for _, realm := range realms.Realms {
-		c.cache.SetRealmID(realm.Name, realm.ID)
+	for _, connectedRealm := range realms.Results {
+		for _, realm := range connectedRealm.Data.Realms {
+			c.cache.SetRealmID(realm.Name.RuRU, connectedRealm.Data.ID)
+			c.cache.SetRealmID(realm.Name.EnGB, connectedRealm.Data.ID)
+		}
 	}
 }
 
 func (c *client) getBlizzRealms(region string) error {
-	requestURL := c.urls[region] + "/data/wow/realm/index"
+	requestURL := c.urls[region] + "/data/wow/search/connected-realm"
 
 	ro := &grequests.RequestOptions{
 		Params: map[string]string{
