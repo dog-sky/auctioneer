@@ -1,6 +1,7 @@
 package blizz
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"net/http"
@@ -31,10 +32,11 @@ type client struct {
 	cfg     *conf.BlizzApiCfg
 	session *grequests.Session
 	urls    map[string]string
+	ctx     context.Context
 	log     *logrus.Logger
 }
 
-func NewClient(logger *logrus.Logger, blizzCfg *conf.BlizzApiCfg) Client {
+func NewClient(ctx context.Context, logger *logrus.Logger, blizzCfg *conf.BlizzApiCfg) Client {
 	urlsMap := make(map[string]string)
 	urlsMap["eu"] = blizzCfg.EuAPIUrl
 	urlsMap["us"] = blizzCfg.UsAPIUrl
@@ -50,6 +52,7 @@ func NewClient(logger *logrus.Logger, blizzCfg *conf.BlizzApiCfg) Client {
 		cache:   cache.NewCache(),
 		session: session,
 		urls:    urlsMap,
+		ctx:     ctx,
 		log:     logger,
 	}
 }

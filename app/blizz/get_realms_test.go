@@ -3,6 +3,7 @@ package blizz
 import (
 	"auctioneer/app/conf"
 	logging "auctioneer/app/logger"
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -38,7 +39,7 @@ func TestClient_getRealmsErr(t *testing.T) {
 	}
 
 	log, _ := logging.NewLogger("ERROR")
-	errClient := NewClient(log, &cfgErr.BlizzApiCfg)
+	errClient := NewClient(context.Background(), log, &cfgErr.BlizzApiCfg)
 	_ = errClient.MakeBlizzAuth()
 
 	err := errClient.GetBlizzRealms()

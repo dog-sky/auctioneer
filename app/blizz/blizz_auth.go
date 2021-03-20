@@ -19,10 +19,15 @@ func (c *client) BlizzAuthRoutine() {
 	t := time.NewTicker(delay)
 	defer t.Stop()
 
-	for range t.C {
-		c.log.Info("Making blizzard auth call")
-		if err := c.MakeBlizzAuth(); err != nil {
-			c.log.Errorf("error making blizzard auth request: %v", err)
+	for {
+		select {
+		case <-t.C:
+			c.log.Info("Making blizzard auth call")
+			if err := c.MakeBlizzAuth(); err != nil {
+				c.log.Errorf("error making blizzard auth request: %v", err)
+			}
+		case <-c.ctx.Done():
+			break
 		}
 	}
 }
