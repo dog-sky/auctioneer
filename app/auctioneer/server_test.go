@@ -12,6 +12,7 @@ import (
 func TestSetup(t *testing.T) {
 	cfg := new(conf.Config)
 	cfg.LogLvl = "INFO"
+	cfg.BlizzApiCfg.AuthTimeOut = 3
 	ctx := context.Background()
 
 	app, err := NewApp(ctx, cfg)
