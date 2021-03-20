@@ -52,7 +52,7 @@ func NewApp(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
 
 func (a *Auctioneer) Setup() {
 	blizzClient := blizz.NewClient(a.log, &a.cfg.BlizzApiCfg)
-	go blizzClient.BlizzAuthRoutine() // Сервис переавторизовывается в апи близзарда раз в 24 часа.
+	go blizzClient.BlizzAuthRoutine()
 
 	a.BaseHandler = api.NewBasehandler(blizzClient)
 
