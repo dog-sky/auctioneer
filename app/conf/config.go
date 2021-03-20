@@ -11,6 +11,7 @@ type BlizzApiCfg struct {
 	AUTHUrl      string `envconfig:"BLIZZARD_AUTH_URL" default:"https://us.battle.net/oauth/token"`
 	ClientSecret string `envconfig:"BLIZZARD_CLIENT_SECRET" required:"true"`
 	ClientID     string `envconfig:"BLIZZARD_CLIENT_ID" required:"true"`
+	AuthTimeOut  int `envconfig:"BLIZZARD_AUTH_TIMEOUT" default:"3"`
 }
 
 type Config struct {

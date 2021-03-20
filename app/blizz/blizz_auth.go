@@ -15,7 +15,7 @@ type BlizzardToken struct {
 }
 
 func (c *client) BlizzAuthRoutine() {
-	delay := 6 * time.Hour
+	delay := time.Duration(c.cfg.AuthTimeOut) * time.Hour
 	t := time.NewTicker(delay)
 	defer t.Stop()
 
