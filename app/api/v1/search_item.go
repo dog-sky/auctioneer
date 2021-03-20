@@ -45,7 +45,7 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 	data, err := h.blizzClient.GetAuctionData(realmID, params.Region)
 	if err != nil {
 		return fiber.NewError(
-			fiber.StatusBadRequest,
+			fiber.StatusInternalServerError,
 			err.Error(),
 		)
 	}
