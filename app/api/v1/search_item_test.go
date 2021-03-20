@@ -137,7 +137,7 @@ func Test_SearchItemData(t *testing.T) {
 		{
 			name:      "Valid request but SearchItem raises error",
 			reqURI:    "?item_name=гаррош&region=eu&realm_name=errRealm",
-			expStatus: 400,
+			expStatus: 500,
 			exp: v1.ResponseV1{
 				Success: false,
 				Message: "error making GetAuctionData request, status: 404",
