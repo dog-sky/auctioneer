@@ -1,6 +1,7 @@
 package blizz
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -39,7 +40,7 @@ func makeTestBlizzClient() Client {
 	}
 
 	log, _ := logging.NewLogger("ERROR")
-	return NewClient(log, &cfg.BlizzApiCfg)
+	return NewClient(context.Background(), log, &cfg.BlizzApiCfg)
 }
 
 func authMock(w http.ResponseWriter, r *http.Request) {
