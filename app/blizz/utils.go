@@ -8,6 +8,9 @@ import (
 func isRussian(text string) bool {
 	text = strings.ReplaceAll(text, " ", "")
 	for _, r := range text {
+		if !unicode.Is(unicode.Letter, r) {
+			continue
+		}
 		if !unicode.Is(unicode.Cyrillic, r) {
 			return false
 		}
