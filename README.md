@@ -11,7 +11,7 @@
 [![codecov](https://codecov.io/gh/dog-sky/auctioneer/branch/main/graph/badge.svg?token=SADKGY8ORK)](https://codecov.io/gh/dog-sky/auctioneer)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dog-sky_auctioneer&metric=alert_status)](https://sonarcloud.io/dashboard?id=dog-sky_auctioneer)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/dog-sky/auctioneer)
-[![TelegramBot](https://img.shields.io/badge/t.me-TelegramBot-blue)](https://t.me/AuctionHouseWoWBot)
+[![TelegramBot](https://img.shields.io/badge/t.me-TelegramBot-blue)](https://t.me/wowAucBot)
 
 ---
 
