@@ -1,9 +1,10 @@
 package blizz
 
 import (
-	"fmt"
 	"strings"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/levigross/grequests"
 )
@@ -44,12 +45,12 @@ func (c *client) MakeBlizzAuth() error {
 
 	response, err := c.session.Post(c.cfg.AUTHUrl, ro)
 	if err != nil {
-		return fmt.Errorf("error making blizzard auth request: %v", err)
+		return errors.Wrapf(err, "MakeBlizzAuth POST")
 	}
 
 	tokenData := new(BlizzardToken)
 	if err := response.JSON(tokenData); err != nil {
-		return fmt.Errorf("error unmarshaling blizzard auth response: %v", err)
+		return errors.Wrapf(err, "MakeBlizzAuth Parse JSON")
 	}
 
 	c.token = tokenData

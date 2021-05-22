@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/levigross/grequests"
+	"github.com/pkg/errors"
 )
 
 type ItemAssets struct {
@@ -76,22 +77,18 @@ func (c *client) GetAuctionData(realmID int, region string) ([]*AuctionsDetail, 
 	}
 	response, err := c.makeGetRequest(requestURL, ro)
 	if err != nil {
-		return nil, fmt.Errorf("err making AUCTION DATA request: %v", err)
+		return nil, errors.Wrapf(err, "GetAuctionData makeGetRequest")
 	}
 
 	auctionData := new(AuctionData)
 	if err := response.JSON(auctionData); err != nil {
-		return nil, fmt.Errorf(
-			"error unmarshaling item media response: %v", err,
-		)
+		return nil, errors.Wrapf(err, "GetAuctionData JSON")
 	}
 
 	updatedAt := response.Header.Get("last-modified") // GMT! (-3)
 	updatedAtParsed, err := time.Parse(layoutUS, updatedAt)
 	if err != nil {
-		return nil, fmt.Errorf(
-			"error parsing last-modified header in auction response: %v", err,
-		)
+		return nil, errors.Wrapf(err, "GetAuctionData Parse")
 	}
 	c.cache.SetAuctionData(realmID, region, auctionData, &updatedAtParsed)
 
