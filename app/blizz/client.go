@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"auctioneer/app/cache"
 	"auctioneer/app/conf"
 
@@ -60,11 +62,10 @@ func NewClient(ctx context.Context, logger *logrus.Logger, blizzCfg *conf.BlizzA
 func (c *client) makeGetRequest(requestURL string, ro *grequests.RequestOptions) (*grequests.Response, error) {
 	response, err := c.session.Get(requestURL, ro)
 	if err != nil {
-		return nil, fmt.Errorf(
-			"error making get request: %v", err,
-		)
+		return nil, errors.Wrapf(err, "makeGetRequest")
 	}
 	if !response.Ok {
+
 		return nil, fmt.Errorf(
 			"error making get request, status: %v", response.StatusCode,
 		)

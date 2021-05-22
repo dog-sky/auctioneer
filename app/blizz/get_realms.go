@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/levigross/grequests"
+	"github.com/pkg/errors"
 )
 
 type BlizzRealmsSearchResultResultsDataRealmsName struct {
@@ -32,7 +33,7 @@ type BlizzRealmsSearchResult struct {
 func (c *client) GetBlizzRealms() error {
 	for _, region := range c.cfg.RegionList {
 		if err := c.getBlizzRealms(region); err != nil {
-			return err
+			return errors.Wrapf(err, "GetBlizzRealms")
 		}
 	}
 
@@ -65,15 +66,12 @@ func (c *client) getBlizzRealms(region string) error {
 
 	response, err := c.makeGetRequest(requestURL, ro)
 	if err != nil {
-		return fmt.Errorf("err making GET REALM request: %v", err)
+		return errors.Wrapf(err, "getBlizzRealms makeGetRequest")
 	}
 
 	realmData := new(BlizzRealmsSearchResult)
 	if err := response.JSON(realmData); err != nil {
-		return fmt.Errorf(
-			"error unmarshaling realm list response: %v, region %s",
-			err, region,
-		)
+		return errors.Wrapf(err, "getBlizzRealms JSON")
 	}
 
 	c.setRealms(realmData)

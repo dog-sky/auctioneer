@@ -39,7 +39,11 @@ func TestClient_getRealmsErr(t *testing.T) {
 	}
 
 	log, _ := logging.NewLogger("ERROR")
-	errClient := NewClient(context.Background(), log, &cfgErr.BlizzApiCfg)
+	errClient := NewClient(
+		context.Background(),
+		log,
+		&cfgErr.BlizzApiCfg,
+	)
 	_ = errClient.MakeBlizzAuth()
 
 	err := errClient.GetBlizzRealms()

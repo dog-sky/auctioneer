@@ -9,6 +9,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a
 	github.com/myesui/uuid v1.0.0 // indirect
+	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.7.0
 	github.com/stretchr/testify v1.3.0
 	github.com/twinj/uuid v1.0.0

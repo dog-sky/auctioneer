@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/levigross/grequests"
+	"github.com/pkg/errors"
 )
 
 type ItemResultResultsDataName struct {
@@ -55,14 +56,12 @@ func (c *client) SearchItem(itemName string, region string) (*Item, error) {
 
 	response, err := c.makeGetRequest(requestURL, ro)
 	if err != nil {
-		return nil, fmt.Errorf("err making SEARCH ITEM request: %v", err)
+		return nil, errors.Wrapf(err, "SearchItem makeGetRequest")
 	}
 
 	itemData := new(Item)
 	if err := response.JSON(itemData); err != nil {
-		return nil, fmt.Errorf(
-			"error unmarshaling realm list response: %v", err,
-		)
+		return nil, errors.Wrapf(err, "SearchItem JSON")
 	}
 
 	return itemData, nil

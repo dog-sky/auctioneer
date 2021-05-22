@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/levigross/grequests"
+	"github.com/pkg/errors"
 )
 
 func (c *client) GetItemMedia(itemID string) (*ItemMedia, error) {
@@ -16,14 +17,12 @@ func (c *client) GetItemMedia(itemID string) (*ItemMedia, error) {
 	}
 	response, err := c.makeGetRequest(requestURL, ro)
 	if err != nil {
-		return nil, fmt.Errorf("err making ITEM MEDIA request: %v", err)
+		return nil, errors.Wrapf(err, "GetItemMedia makeGetRequest")
 	}
 
 	itemMedia := new(ItemMedia)
 	if err := response.JSON(itemMedia); err != nil {
-		return nil, fmt.Errorf(
-			"error unmarshaling item media response: %v", err,
-		)
+		return nil, errors.Wrapf(err, "GetItemMedia JSON")
 	}
 
 	return itemMedia, nil
