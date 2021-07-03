@@ -31,7 +31,7 @@ func NewCache() Cache {
 
 func (c *cache) GetRealmID(RealmName string) int {
 	c.mux.RLock()
-
+	defer c.mux.RUnlock()
 
 	return c.realmList[strings.ToLower(RealmName)]
 }
