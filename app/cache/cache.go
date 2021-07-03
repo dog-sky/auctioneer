@@ -42,8 +42,9 @@ func (c *cache) SetRealmID(RealmName string, RealmID int) {
 	}
 
 	c.mux.Lock()
+	defer c.mux.Unlock()
+
 	c.realmList[strings.ToLower(RealmName)] = RealmID
-	c.mux.Unlock()
 }
 
 func (c *cache) GetAuctionData(realmID int, region string) interface{} {
