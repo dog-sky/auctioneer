@@ -61,14 +61,14 @@ func NewClient(ctx context.Context, logger *logrus.Logger, blizzCfg *conf.BlizzA
 
 func (c *client) makeGetRequest(requestURL string, ro *grequests.RequestOptions) (*grequests.Response, error) {
 	response, err := c.session.Get(requestURL, ro)
+
 	if err != nil {
 		return nil, errors.Wrapf(err, "makeGetRequest")
 	}
 	if !response.Ok {
-
-		return nil, fmt.Errorf(
+		return nil, errors.Wrapf(fmt.Errorf(
 			"error making get request, status: %v", response.StatusCode,
-		)
+		), "makeGetRequest")
 	}
 
 	return response, nil
