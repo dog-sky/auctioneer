@@ -42,7 +42,7 @@ func (c *cache) SetRealmID(RealmName string, RealmID int) {
 	}
 
 	c.mux.Lock()
-	defer c.mux.RUnlock()
+	defer c.mux.Unlock()
 
 	c.realmList[strings.ToLower(RealmName)] = RealmID
 }
