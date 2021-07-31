@@ -18,17 +18,19 @@ type BlizzardToken struct {
 func (c *client) BlizzAuthRoutine() {
 	delay := time.Duration(c.cfg.AuthTimeOut) * time.Hour
 	t := time.NewTicker(delay)
+
 	defer t.Stop()
 
 	for {
 		select {
 		case <-t.C:
 			c.log.Info("Making blizzard auth call")
+
 			if err := c.MakeBlizzAuth(); err != nil {
 				c.log.Errorf("error making blizzard auth request: %v", err)
 			}
 		case <-c.ctx.Done():
-			break
+			return
 		}
 	}
 }

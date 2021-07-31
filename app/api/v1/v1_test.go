@@ -1,12 +1,12 @@
 package v1_test
 
 import (
+	"auctioneer/app/api/system"
+	"auctioneer/app/blizz"
 	"fmt"
 	"strings"
 
-	"auctioneer/app/api/system"
 	v1 "auctioneer/app/api/v1"
-	"auctioneer/app/blizz"
 )
 
 func newV1handler() v1.Handler {
@@ -47,7 +47,6 @@ func (c *mockBlizzClient) MakeBlizzAuth() error {
 }
 
 func (c *mockBlizzClient) GetItemMedia(itemID string) (*blizz.ItemMedia, error) {
-
 	if itemID == "404" {
 		return nil, nil
 	}
@@ -74,9 +73,11 @@ func (c *mockBlizzClient) GetRealmID(s string) int {
 	if s == "Killrog" {
 		return 1
 	}
+
 	if s == "errRealm" {
 		return 2
 	}
+
 	return 0
 }
 
@@ -100,6 +101,7 @@ func (c *mockBlizzClient) SearchItem(itemName string, region string) (*blizz.Ite
 			},
 		}, nil
 	}
+
 	if strings.Contains(itemName, "опал") {
 		return &blizz.Item{
 			Results: []blizz.ItemResultResults{
@@ -119,11 +121,13 @@ func (c *mockBlizzClient) SearchItem(itemName string, region string) (*blizz.Ite
 			},
 		}, nil
 	}
+
 	if strings.Contains(itemName, "riseError") {
 		return nil, fmt.Errorf(
 			"error making get auction request, status: %d", 404,
 		)
 	}
+
 	return &blizz.Item{
 		Results: []blizz.ItemResultResults{},
 	}, nil
@@ -160,6 +164,7 @@ func (c *mockBlizzClient) GetAuctionData(realmID int, region string) ([]*blizz.A
 			},
 		}, nil
 	}
+
 	return nil, fmt.Errorf(
 		"error making GetAuctionData request, status: %d", 404,
 	)

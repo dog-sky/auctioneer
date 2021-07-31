@@ -22,7 +22,8 @@ type Config struct {
 
 func NewConfig() (*Config, error) {
 	cfg := new(Config)
-	cfg.BlizzApiCfg.RegionList = []string{"eu", "us"}
+	cfg.RegionList = []string{"eu", "us"}
+
 	if err := envconfig.Process("AUCTIONEER", cfg); err != nil {
 		return nil, err
 	}

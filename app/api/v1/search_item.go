@@ -1,9 +1,8 @@
 package v1
 
 import (
-	"fmt"
-
 	"auctioneer/app/blizz"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -35,6 +34,7 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 			err.Error(),
 		)
 	}
+
 	if len(searchResult.Results) == 0 {
 		return fiber.NewError(
 			fiber.StatusNotFound,
@@ -51,6 +51,7 @@ func (h *V1Handler) SearchItemData(c *fiber.Ctx) error {
 	}
 
 	res.Result = []*blizz.AuctionsDetail{}
+
 	for _, AucItem := range data {
 		for _, item := range searchResult.Results {
 			if AucItem.Item.ID == item.Data.ID {
