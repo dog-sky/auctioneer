@@ -1,11 +1,10 @@
 package cache_test
 
 import (
-	"testing"
-	"time"
-
 	"auctioneer/app/blizz"
 	"auctioneer/app/cache"
+	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -13,13 +12,17 @@ import (
 func Test_cache_getSetRealm(t *testing.T) {
 	c := cache.NewCache()
 
-	testCases := []struct {
+	t.Parallel()
+
+	type tc struct {
 		name      string
 		realmName string
 		realmID   int
 		getKey    string
 		exp       int
-	}{
+	}
+
+	testCases := []tc{
 		{
 			name:      "SET GET ok Гордунни",
 			realmName: "Гордунни",
@@ -57,16 +60,20 @@ func Test_cache_getSetRealm(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			c.SetRealmID(tc.realmName, tc.realmID)
-			val := c.GetRealmID(tc.getKey)
-			assert.Equal(t, tc.exp, val)
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+			c.SetRealmID(testCase.realmName, testCase.realmID)
+			val := c.GetRealmID(testCase.getKey)
+			assert.Equal(t, testCase.exp, val)
 		})
 	}
 }
 
 func Test_cache_SetAuctionData(t *testing.T) {
+	t.Parallel()
+
 	c := cache.NewCache()
 	now := time.Now()
 	pastHour := time.Now().Add(-1 * time.Hour)
@@ -78,6 +85,7 @@ func Test_cache_SetAuctionData(t *testing.T) {
 		auctionData interface{}
 		updatedAt   *time.Time
 	}
+
 	tests := []struct {
 		name       string
 		args       args
@@ -334,7 +342,9 @@ func Test_cache_SetAuctionData(t *testing.T) {
 	}
 
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			c.SetAuctionData(tt.args.realmID, tt.args.region, tt.args.auctionData, tt.args.updatedAt)
 
 			data := c.GetAuctionData(tt.getRealmID, tt.getRegion)

@@ -8,6 +8,8 @@ import (
 )
 
 func TestNewConfig(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name       string
 		want       *Config
@@ -28,13 +30,17 @@ func TestNewConfig(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
+
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			if tt.setGoodEnv {
 				setGoodEnv()
 			}
 			got, err := NewConfig()
 			if (err != nil) != tt.wantErr {
 				assert.Error(t, err)
+
 				return
 			}
 			assert.IsType(t, tt.want, got)

@@ -2,7 +2,7 @@ package api
 
 import (
 	"auctioneer/app/api/system"
-	"auctioneer/app/api/v1"
+	v1 "auctioneer/app/api/v1"
 	"auctioneer/app/blizz"
 )
 

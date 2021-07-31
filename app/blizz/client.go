@@ -1,6 +1,8 @@
 package blizz
 
 import (
+	"auctioneer/app/cache"
+	"auctioneer/app/conf"
 	"context"
 	"crypto/tls"
 	"fmt"
@@ -9,14 +11,14 @@ import (
 
 	"github.com/pkg/errors"
 
-	"auctioneer/app/cache"
-	"auctioneer/app/conf"
-
 	"github.com/levigross/grequests"
 	"github.com/sirupsen/logrus"
 )
 
-const layoutUS = "Mon, 2 Jan 2006 15:04:05 MST"
+const (
+	layoutUS = "Mon, 2 Jan 2006 15:04:05 MST"
+	timeOut = time.Second * 10
+)
 
 type Client interface {
 	GetBlizzRealms() error
@@ -47,7 +49,7 @@ func NewClient(ctx context.Context, logger *logrus.Logger, blizzCfg *conf.BlizzA
 	session.HTTPClient.Transport = &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-	session.HTTPClient.Timeout = time.Second * 10
+	session.HTTPClient.Timeout = timeOut
 
 	return &client{
 		cfg:     blizzCfg,
@@ -61,7 +63,6 @@ func NewClient(ctx context.Context, logger *logrus.Logger, blizzCfg *conf.BlizzA
 
 func (c *client) makeGetRequest(requestURL string, ro *grequests.RequestOptions) (*grequests.Response, error) {
 	response, err := c.session.Get(requestURL, ro)
-
 	if err != nil {
 		return nil, errors.Wrapf(err, "makeGetRequest")
 	}

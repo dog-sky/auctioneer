@@ -1,6 +1,7 @@
 package blizz
 
 import (
+	"auctioneer/app/conf"
 	"context"
 	"encoding/json"
 	"io"
@@ -8,7 +9,6 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	"auctioneer/app/conf"
 	logging "auctioneer/app/logger"
 
 	"github.com/twinj/uuid"

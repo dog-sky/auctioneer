@@ -1,6 +1,9 @@
 package v1_test
 
 import (
+	"auctioneer/app/blizz"
+	"auctioneer/app/conf"
+	"auctioneer/app/router"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -10,19 +13,19 @@ import (
 
 	v1 "auctioneer/app/api/v1"
 	server "auctioneer/app/auctioneer"
-	"auctioneer/app/blizz"
-	"auctioneer/app/conf"
-	"auctioneer/app/router"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_SearchItemData(t *testing.T) {
+	t.Parallel()
+
 	cfg := new(conf.Config)
 	cfg.LogLvl = "INFO"
 	ctx := context.Background()
 	app, err := server.NewApp(ctx, cfg)
 	assert.NoError(t, err)
+
 	app.BaseHandler = &mockHandler{
 		v1:     newV1handler(),
 		system: newSystemHandler(),
@@ -146,7 +149,9 @@ func Test_SearchItemData(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
+		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
 			reqURI := fmt.Sprintf("/api/v1/auc_search%s", tc.reqURI)
 			req := httptest.NewRequest("GET", reqURI, nil)
 
@@ -167,8 +172,9 @@ func Test_SearchItemData(t *testing.T) {
 }
 
 func Test_Handler(t *testing.T) {
-	h := newV1handler()
+	t.Parallel()
 
+	h := newV1handler()
 	err := h.MakeBlizzAuth()
 	assert.NoError(t, err)
 

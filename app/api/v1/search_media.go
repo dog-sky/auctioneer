@@ -27,5 +27,6 @@ func (h *V1Handler) SearchItemMedia(c *fiber.Ctx) error {
 	resp := new(ResponseV1ItemMedia)
 	resp.Success = true
 	resp.ItemMedia = res
+
 	return c.JSON(resp)
 }
