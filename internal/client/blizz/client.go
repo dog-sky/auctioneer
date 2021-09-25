@@ -1,13 +1,14 @@
 package blizz
 
 import (
-	"auctioneer/app/cache"
-	"auctioneer/app/conf"
 	"context"
 	"crypto/tls"
 	"fmt"
 	"net/http"
 	"time"
+
+	conf "github.com/dog-sky/auctioneer/configs"
+	"github.com/dog-sky/auctioneer/internal/pkg/cache"
 
 	"github.com/pkg/errors"
 
@@ -17,7 +18,7 @@ import (
 
 const (
 	layoutUS = "Mon, 2 Jan 2006 15:04:05 MST"
-	timeOut = time.Second * 10
+	timeOut  = time.Second * 10
 )
 
 type Client interface {

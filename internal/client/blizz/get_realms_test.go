@@ -1,10 +1,11 @@
 package blizz
 
 import (
-	"auctioneer/app/conf"
-	logging "auctioneer/app/logger"
 	"context"
 	"testing"
+
+	conf "github.com/dog-sky/auctioneer/configs"
+	logging "github.com/dog-sky/auctioneer/internal/pkg/logger"
 
 	"github.com/stretchr/testify/assert"
 )

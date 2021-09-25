@@ -1,8 +1,9 @@
 package v1
 
 import (
-	"auctioneer/app/blizz"
 	"fmt"
+
+	"github.com/dog-sky/auctioneer/internal/client/blizz"
 
 	"github.com/gofiber/fiber/v2"
 )

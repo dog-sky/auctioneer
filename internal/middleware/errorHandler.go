@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	v1 "auctioneer/app/api/v1"
+	v1 "github.com/dog-sky/auctioneer/internal/api/v1"
 
 	"github.com/gofiber/fiber/v2"
 )

@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	server "auctioneer/app/auctioneer"
-	"auctioneer/app/conf"
+	conf "github.com/dog-sky/auctioneer/configs"
+	server "github.com/dog-sky/auctioneer/internal/app/auctioneer"
 
 	_ "github.com/joho/godotenv/autoload"
 )
