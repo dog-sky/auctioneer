@@ -12,7 +12,7 @@ COPY go.sum .
 RUN go mod download
 
 COPY . .
-RUN go build -ldflags "-s -w" -o main .
+RUN go build -ldflags "-s -w" -o main ./cmd/auctioneer/main.go
 
 WORKDIR /dist
 RUN cp /build/main .

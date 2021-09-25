@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"auctioneer/app/blizz"
+	"github.com/dog-sky/auctioneer/internal/client/blizz"
 )
 
 type searchQueryParams struct {

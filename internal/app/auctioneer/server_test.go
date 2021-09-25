@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"auctioneer/app/conf"
+	conf "github.com/dog-sky/auctioneer/configs"
 
 	"github.com/stretchr/testify/assert"
 )

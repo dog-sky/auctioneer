@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	"auctioneer/app/api"
-	"auctioneer/app/blizz"
-	"auctioneer/app/conf"
-	logging "auctioneer/app/logger"
-	"auctioneer/app/middleware"
-	"auctioneer/app/router"
+	"github.com/dog-sky/auctioneer/configs"
+	"github.com/dog-sky/auctioneer/internal/api"
+	"github.com/dog-sky/auctioneer/internal/client/blizz"
+	"github.com/dog-sky/auctioneer/internal/middleware"
+	logging "github.com/dog-sky/auctioneer/internal/pkg/logger"
+	"github.com/dog-sky/auctioneer/internal/router"
 
 	"github.com/gofiber/fiber/v2"
 	fiberLogger "github.com/gofiber/fiber/v2/middleware/logger"
@@ -24,12 +24,12 @@ const (
 type Auctioneer struct {
 	Fib         *fiber.App
 	log         *logrus.Logger
-	cfg         *conf.Config
+	cfg         *configs.Config
 	ctx         context.Context
 	BaseHandler api.Handler
 }
 
-func NewApp(ctx context.Context, cfg *conf.Config) (*Auctioneer, error) {
+func NewApp(ctx context.Context, cfg *configs.Config) (*Auctioneer, error) {
 	app := new(Auctioneer)
 	app.Fib = fiber.New(fiber.Config{
 		ErrorHandler:          middleware.ErrorHandler,

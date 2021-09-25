@@ -1,10 +1,11 @@
 package cache_test
 
 import (
-	"auctioneer/app/blizz"
-	"auctioneer/app/cache"
 	"testing"
 	"time"
+
+	"github.com/dog-sky/auctioneer/internal/client/blizz"
+	"github.com/dog-sky/auctioneer/internal/pkg/cache"
 
 	"github.com/stretchr/testify/assert"
 )

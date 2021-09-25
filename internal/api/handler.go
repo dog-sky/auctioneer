@@ -1,9 +1,10 @@
 package api
 
 import (
-	"auctioneer/app/api/system"
-	v1 "auctioneer/app/api/v1"
-	"auctioneer/app/blizz"
+	"github.com/dog-sky/auctioneer/internal/api/system"
+
+	v1 "github.com/dog-sky/auctioneer/internal/api/v1"
+	"github.com/dog-sky/auctioneer/internal/client/blizz"
 )
 
 type Handler interface {

@@ -1,9 +1,6 @@
 package v1_test
 
 import (
-	"auctioneer/app/blizz"
-	"auctioneer/app/conf"
-	"auctioneer/app/router"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -11,8 +8,12 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	v1 "auctioneer/app/api/v1"
-	server "auctioneer/app/auctioneer"
+	conf "github.com/dog-sky/auctioneer/configs"
+	"github.com/dog-sky/auctioneer/internal/client/blizz"
+	"github.com/dog-sky/auctioneer/internal/router"
+
+	v1 "github.com/dog-sky/auctioneer/internal/api/v1"
+	server "github.com/dog-sky/auctioneer/internal/app/auctioneer"
 
 	"github.com/stretchr/testify/assert"
 )

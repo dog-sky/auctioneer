@@ -1,13 +1,14 @@
 package system_test
 
 import (
-	"auctioneer/app/api/system"
-	"auctioneer/app/conf"
 	"context"
 	"net/http/httptest"
 	"testing"
 
-	server "auctioneer/app/auctioneer"
+	conf "github.com/dog-sky/auctioneer/configs"
+	"github.com/dog-sky/auctioneer/internal/api/system"
+
+	server "github.com/dog-sky/auctioneer/internal/app/auctioneer"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -1,4 +1,4 @@
-module auctioneer
+module github.com/dog-sky/auctioneer
 
 go 1.15
 

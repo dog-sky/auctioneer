@@ -1,12 +1,13 @@
 package v1_test
 
 import (
-	"auctioneer/app/api/system"
-	"auctioneer/app/blizz"
 	"fmt"
 	"strings"
 
-	v1 "auctioneer/app/api/v1"
+	"github.com/dog-sky/auctioneer/internal/api/system"
+	"github.com/dog-sky/auctioneer/internal/client/blizz"
+
+	v1 "github.com/dog-sky/auctioneer/internal/api/v1"
 )
 
 func newV1handler() v1.Handler {
