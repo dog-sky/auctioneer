@@ -1,5 +1,9 @@
 package blizz
 
+//go:generate mkdir -p mocks
+//go:generate rm -rf ./mocks/*_minimock.go
+//go:generate minimock -i Client -o ./mocks/ -s "_minimock.go"
+
 import (
 	"context"
 	"crypto/tls"
